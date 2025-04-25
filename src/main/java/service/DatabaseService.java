@@ -1,6 +1,7 @@
 package service;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -10,7 +11,7 @@ public class DatabaseService {
     private static final String DB_URL = "jdbc:sqlite:timelog.db";
 
     public DatabaseService() {
-        createTableIfNotExists(); // Увери се, че таблицата се създава
+        createTableIfNotExists();
     }
 
     private void createTableIfNotExists() {
@@ -36,9 +37,9 @@ public class DatabaseService {
 
     public void insert(TimeEntry entry, double hours) {
         String sql = """
-                INSERT INTO time_entries(project_name, entry_date, start_time, end_time, worked_hours, created_at)
-                                           VALUES (?, ?, ?, ?, ?, ?);
-            """;
+                    INSERT INTO time_entries(project_name, entry_date, start_time, end_time, worked_hours, created_at)
+                                               VALUES (?, ?, ?, ?, ?, ?);
+                """;
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -75,6 +76,33 @@ public class DatabaseService {
             }
         } catch (SQLException e) {
             System.out.println("Delete error: " + e.getMessage());
+        }
+    }
+
+    public void getWeeklyHoursPerProject(LocalDate start, LocalDate end) {
+        String sql = """
+                SELECT project_name, SUM(worked_hours) as total_hours
+                FROM time_entries
+                WHERE entry_date BETWEEN ? AND ?
+                GROUP BY project_name
+                ORDER BY total_hours DESC;
+                """;
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, start.toString());
+            pstmt.setString(2, end.toString());
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.printf("Time period of the report: %s --- %s%n", start, end);
+            System.out.printf("%-50s | %-10s%n", "Project Name", "Total Hours");
+            System.out.println("-".repeat(65));
+            while (rs.next()) {
+                String name = rs.getString("project_name");
+                double hours = rs.getDouble("total_hours");
+                System.out.printf("%-50s | %-10.2f%n", name, hours);
+            }
+        } catch (SQLException e) {
+            System.out.println("Query error: " + e.getMessage());
         }
     }
 }

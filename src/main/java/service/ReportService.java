@@ -1,11 +1,19 @@
 package service;
 
 import java.sql.*;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ReportService {
     private static final String DB_URL = "jdbc:sqlite:timelog.db";
+
+    private final DatabaseService db;
+
+    public ReportService(DatabaseService db) {
+        this.db = db;
+    }
 
     public Map<String, Double> getWorkedHoursPerDay() {
         Map<String, Double> result = new LinkedHashMap<>();
@@ -51,5 +59,11 @@ public class ReportService {
         }
 
         return result;
+    }
+
+    public void reportWeeklyProjectHours() {
+        LocalDate start = LocalDate.now().with(DayOfWeek.MONDAY);
+        LocalDate end = LocalDate.now().with(DayOfWeek.SUNDAY);
+        db.getWeeklyHoursPerProject(start, end);
     }
 }
