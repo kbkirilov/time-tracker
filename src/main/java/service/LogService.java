@@ -36,7 +36,7 @@ public class LogService {
     }
 
     public TimeEntry getUserInput() {
-        System.out.print("Enter project name: ");
+        System.out.print("Enter project name or choose from the above: ");
         String projectName = scanner.nextLine();
 
         System.out.print("Enter date (yyyy-MM-dd or 'today'): ");

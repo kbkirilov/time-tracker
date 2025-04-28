@@ -5,10 +5,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import record.TimeEntry;
 
@@ -209,5 +206,29 @@ public class DatabaseService {
         }
 
         return weeklyData;
+    }
+
+    public List<String> getLastFiveUniqueProjectNames() {
+        List<String> result = new ArrayList<>();
+
+        String sql = """
+                SELECT DISTINCT project_name
+                FROM time_entries
+                ORDER BY created_at ASC
+                LIMIT 5
+                """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                result.add(rs.getString(1));
+            }
+        } catch (SQLException e) {
+            System.out.println("Query error: " + e.getMessage());
+        }
+
+        return result;
     }
 }

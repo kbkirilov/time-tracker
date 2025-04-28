@@ -43,10 +43,15 @@ public class MenuService {
     }
 
     private void insertTimeMenu() {
-        //TODO Show the latest 5 different project names and give an option to select on of them or write your own.
+        //TODO Show the latest 5 different project names and give an option to select one of them or write your own.
+        printLatestFiveProjectsFromDb();
         TimeEntry entry = logService.getUserInput();
         logService.insertEntry(entry);
         System.out.println("Time logged successfully.");
+    }
+
+    private void printLatestFiveProjectsFromDb() {
+        reportService.printLastFiveUniqueProjectNames();
     }
 
     private void showReportsMenu() {

@@ -49,7 +49,7 @@ public class ReportService {
         Map<String, Double> projectHours = db.getWeeklyWorkedHoursPerProject(start, end);
 
         System.out.println("=".repeat(65));
-        System.out.printf("Time period of the report: %s / %s%n", start, end);
+        System.out.printf("TIME PERIOD OF THE REPORT: %s / %s%n", start, end);
         printTwoColumnsTableHeaders("PROJECT NAME", "TOTAL HOURS");
 
         for (Map.Entry<String, Double> entry : projectHours.entrySet()) {
@@ -98,7 +98,7 @@ public class ReportService {
         // Calculate and print weekly totals per project
         System.out.println("\n" + "=".repeat(80));
         System.out.println("WEEKLY TOTALS PER PROJECT");
-        System.out.println("-".repeat(80));
+        System.out.println("=".repeat(80));
         System.out.printf("%-50s | %-10s%n", "PROJECT NAME", "TOTAL HOURS");
         System.out.println("-".repeat(80));
 
@@ -147,4 +147,13 @@ public class ReportService {
         System.out.println("=".repeat(65));
     }
 
+    public void printLastFiveUniqueProjectNames() {
+        List<String> list = db.getLastFiveUniqueProjectNames();
+        System.out.println("Last 5 projects from the database:");
+        System.out.println("=".repeat(65));
+        for (String s : list) {
+            System.out.println(s);
+        }
+        System.out.println();
+    }
 }
