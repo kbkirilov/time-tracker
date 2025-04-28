@@ -2,6 +2,7 @@ package service;
 
 import record.TimeEntry;
 
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class MenuService {
@@ -21,6 +22,7 @@ public class MenuService {
     private void showMainMenu() {
         while (true) {
             System.out.println("""
+                        --- MAIN MENU ---
                         1. Log time
                         2. View reports
                         3. Delete entry
@@ -50,19 +52,20 @@ public class MenuService {
     private void showReportsMenu() {
         while (true) {
             System.out.println("""
-                        --- Reports ---
-                        1. Total hours per day
-                        2. Total hours per project
-                        3. Total hours per project for the week
-                        4. Back
+                        --- REPORTS MENU ---
+                        1. Daily reports
+                        2. Total worked hours per project
+                        3. Total worked hours per project for the current week
+                        4. Weekly project breakdown
+                        5. Back
                     """);
             String choice = scanner.nextLine();
             switch (choice) {
-                case "1" -> getWorkedHoursPerDay();
+                case "1" -> showHoursPerDaySubmenu();
                 case "2" -> showProjectReportsSubmenu();
                 case "3" -> reportWeeklyProjectHours();
-                case "4" -> {
-                    System.out.println("Bye!");
+                case "4" -> getWeeklyProjectBreakdown();
+                case "5" -> {
                     return;
                 }
                 default -> System.out.println("Invalid choice.");
@@ -70,17 +73,36 @@ public class MenuService {
         }
     }
 
-    private void getWorkedHoursPerDay() {
-        var hoursPerDay = reportService.getWorkedHoursPerDay();
-        hoursPerDay.forEach((date, hours) -> {
-            System.out.println(date + ": " + hours + " hours");
-        });
+    private void showHoursPerDaySubmenu() {
+        while (true) {
+            System.out.println("""
+                        --- PROJECT REPORTS ---
+                        1. Get all hours for each day
+                        2. Get hours for a given day
+                        3. Back
+                    """);
+            String choice = scanner.nextLine();
+            switch (choice) {
+                case "1":
+                    getAllWorkedHoursPerDay();
+                    break;
+                case "2":
+                    System.out.print("Enter date (YYYY-MM-DD): ");
+                    LocalDate date = LocalDate.parse(scanner.nextLine());
+                    getWorkedHoursForParticularDay(date);
+                    break;
+                case "3":
+                    return;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        }
     }
 
     private void showProjectReportsSubmenu() {
         while (true) {
             System.out.println("""
-                        --- Project Reports ---
+                        --- PROJECT REPORTS ---
                         1. View by project name
                         2. Back
                     """);
@@ -97,6 +119,18 @@ public class MenuService {
                     System.out.println("Invalid choice.");
             }
         }
+    }
+
+    private void getWorkedHoursForParticularDay(LocalDate date) {
+        reportService.getWorkedHoursForParticularDay(date);
+    }
+
+    private void getWeeklyProjectBreakdown() {
+        reportService.getWeeklyProjectBreakdown();
+    }
+
+    private void getAllWorkedHoursPerDay() {
+        reportService.getWorkedHoursPerDay();
     }
 
     private void deleteEntryMenu() {
@@ -116,9 +150,6 @@ public class MenuService {
     }
 
     private void getWorkedHoursPerProject(String projectName) {
-        var hoursPerProject = reportService.getWorkedHoursPerProject(projectName);
-        hoursPerProject.forEach((pName, hours) -> {
-            System.out.println(pName + " " + hours + " hours");
-        });
+        reportService.getWorkedHoursPerProject(projectName);
     }
 }

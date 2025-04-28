@@ -1,10 +1,9 @@
 package service;
 
-import java.sql.*;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.time.format.TextStyle;
+import java.util.*;
 
 public class ReportService {
     private static final String DB_URL = "jdbc:sqlite:timelog.db";
@@ -15,55 +14,137 @@ public class ReportService {
         this.db = db;
     }
 
-    public Map<String, Double> getWorkedHoursPerDay() {
-        Map<String, Double> result = new LinkedHashMap<>();
-        String sql = "SELECT entry_date, SUM(worked_hours) FROM time_entries GROUP BY entry_date";
+    public void getWorkedHoursPerDay() {
+        printTwoColumnsTableHeaders("DATE", "TOTAL_HOURS");
 
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        Map<String, Double> result = db.getWorkedHoursPerDay();
 
-            while (rs.next()) {
-                result.put(rs.getString(1), rs.getDouble(2));
-            }
-        } catch (SQLException e) {
-            System.out.println("Query error: " + e.getMessage());
+        for (Map.Entry<String, Double> entry : result.entrySet()) {
+            System.out.printf("%-50s | %-10s%n", formatDateWithDayOfWeek(entry.getKey()), formatHoursToHHMM(entry.getValue()));
+            System.out.println("-".repeat(65));
         }
-
-        return result;
     }
 
-    public Map<String, Double> getWorkedHoursPerProject(String projectName) {
-        Map<String, Double> result = new LinkedHashMap<>();
+    public void getWorkedHoursPerProject(String projectName) {
+        Map<String, Double> result = db.getWorkedHoursPerProject(projectName);
 
-        String sql = """
-                SELECT project_name, SUM(worked_hours)
-                FROM time_entries
-                WHERE project_name LIKE ?
-                GROUP BY project_name
-            """;
+        printTwoColumnsTableHeaders("PROJECT NAME", "TOTAL HOURS");
 
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-             pstmt.setString(1, projectName);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    String name = rs.getString("project_name");
-                    double hours = rs.getDouble(2);
-                    result.put(name, hours);
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Query error: " + e.getMessage());
+        for (Map.Entry<String, Double> entry : result.entrySet()) {
+            System.out.printf("%-50s | %-10s%n", entry.getKey(), formatHoursToHHMM(entry.getValue()));
+            System.out.println("-".repeat(65));
         }
-
-        return result;
     }
+
+    public void getWorkedHoursForParticularDay(LocalDate date) {
+        double hours = db.getWorkedHoursForParticularDay(date);
+        printTwoColumnsTableHeaders(date.toString(), formatHoursToHHMM(hours));
+    }
+
 
     public void reportWeeklyProjectHours() {
         LocalDate start = LocalDate.now().with(DayOfWeek.MONDAY);
         LocalDate end = LocalDate.now().with(DayOfWeek.SUNDAY);
-        db.getWeeklyHoursPerProject(start, end);
+
+        Map<String, Double> projectHours = db.getWeeklyWorkedHoursPerProject(start, end);
+
+        System.out.println("=".repeat(65));
+        System.out.printf("Time period of the report: %s / %s%n", start, end);
+        printTwoColumnsTableHeaders("PROJECT NAME", "TOTAL HOURS");
+
+        for (Map.Entry<String, Double> entry : projectHours.entrySet()) {
+            System.out.printf("%-50s | %-10s%n", entry.getKey(), formatHoursToHHMM(entry.getValue()));
+            System.out.println("-".repeat(65));
+        }
     }
+
+    public void getWeeklyProjectBreakdown() {
+        LocalDate start = LocalDate.now().with(DayOfWeek.MONDAY);
+        LocalDate end = LocalDate.now().with(DayOfWeek.SUNDAY);
+
+        Map<LocalDate, Map<String, Double>> weeklyData =  db.getWeeklyProjectReport(start, end);
+
+        System.out.println("=".repeat(65));
+        System.out.printf("WEEKLY PROJECT HOURS REPORT: %s / %s%n", start, end);
+        System.out.println("=".repeat(65));
+
+        // For each day of the week
+        LocalDate current = start;
+        while (!current.isAfter(end)) {
+            System.out.println("\n" + formatDateWithDayOfWeek(current.toString()));
+            System.out.println("-".repeat(80));
+            System.out.printf("%-50s | %-10s%n", "PROJECT NAME", "HOURS");
+            System.out.println("-".repeat(80));
+
+            // Get projects for this day
+            Map<String, Double> dayProjects = weeklyData.getOrDefault(current, Collections.emptyMap());
+
+            if (dayProjects.isEmpty()) {
+                System.out.println("No hours recorded for this day");
+            } else {
+                // Print each project's hours for this day
+                for (Map.Entry<String, Double> entry : dayProjects.entrySet()) {
+                    System.out.printf("%-50s | %-10s%n", entry.getKey(), formatHoursToHHMM(entry.getValue()));
+                }
+
+                double dailyTotal = dayProjects.values().stream().mapToDouble(Double::doubleValue).sum();
+                System.out.println("-".repeat(80));
+                System.out.printf("%-50s | %-10s%n", "DAILY TOTAL", formatHoursToHHMM(dailyTotal));
+            }
+
+            current = current.plusDays(1);
+        }
+
+        // Calculate and print weekly totals per project
+        System.out.println("\n" + "=".repeat(80));
+        System.out.println("WEEKLY TOTALS PER PROJECT");
+        System.out.println("-".repeat(80));
+        System.out.printf("%-50s | %-10s%n", "PROJECT NAME", "TOTAL HOURS");
+        System.out.println("-".repeat(80));
+
+        Map<String, Double> projectTotals = new HashMap<>();
+        for(Map<String, Double> dayDate : weeklyData.values()) {
+            for(Map.Entry<String, Double> entry : dayDate.entrySet()) {
+                String project = entry.getKey();
+                double hours = entry.getValue();
+                projectTotals.put(project, projectTotals.getOrDefault(project, 0.00) + hours);
+            }
+        }
+
+        // Sort projects by total hours (descending)
+        List<Map.Entry<String, Double>> sortedProjects = new ArrayList<>(projectTotals.entrySet());
+        sortedProjects.sort(Map.Entry.<String, Double>comparingByValue().reversed());
+
+        // Print each project's weekly total
+        for (Map.Entry<String, Double> entry : sortedProjects) {
+            System.out.printf("%-50s | %-10s%n", entry.getKey(), formatHoursToHHMM(entry.getValue()));
+        }
+
+        // Print grand total
+        double grandTotal = projectTotals.values().stream().mapToDouble(Double::doubleValue).sum();
+        System.out.println("-".repeat(80));
+        System.out.printf("%-50s | %-10.2f%n", "GRAND TOTAL", grandTotal);
+        System.out.println("=".repeat(80));
+    }
+
+    private String formatDateWithDayOfWeek(String dateStr) {
+        LocalDate date = LocalDate.parse(dateStr);
+
+        DayOfWeek dayOfWeek = date.getDayOfWeek();
+        return String.format("%s / %s", dateStr, dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault()));
+    }
+
+    private String formatHoursToHHMM(double hours) {
+        int totalMinutes = (int) Math.round(hours * 60);
+        int h = totalMinutes / 60;
+        int m = totalMinutes % 60;
+        return String.format("%02d:%02d hours", h, m);
+    }
+
+    private void printTwoColumnsTableHeaders(String column1Header, String column2Header) {
+        System.out.println("=".repeat(65));
+        System.out.printf("%-50s | %-10s%n", column1Header, column2Header);
+        System.out.println("=".repeat(65));
+    }
+
 }

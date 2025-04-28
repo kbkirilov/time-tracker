@@ -1,9 +1,14 @@
 package service;
 
 import java.sql.*;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import record.TimeEntry;
 
@@ -79,7 +84,8 @@ public class DatabaseService {
         }
     }
 
-    public void getWeeklyHoursPerProject(LocalDate start, LocalDate end) {
+    public Map<String, Double> getWeeklyWorkedHoursPerProject(LocalDate start, LocalDate end) {
+        Map<String, Double> result = new TreeMap<>();
         String sql = """
                 SELECT project_name, SUM(worked_hours) as total_hours
                 FROM time_entries
@@ -93,16 +99,115 @@ public class DatabaseService {
             pstmt.setString(2, end.toString());
             ResultSet rs = pstmt.executeQuery();
 
-            System.out.printf("Time period of the report: %s --- %s%n", start, end);
-            System.out.printf("%-50s | %-10s%n", "Project Name", "Total Hours");
-            System.out.println("-".repeat(65));
             while (rs.next()) {
                 String name = rs.getString("project_name");
                 double hours = rs.getDouble("total_hours");
-                System.out.printf("%-50s | %-10.2f%n", name, hours);
+                result.put(name, result.getOrDefault(name, 0.00) + hours);
             }
         } catch (SQLException e) {
             System.out.println("Query error: " + e.getMessage());
         }
+
+        return result;
+    }
+
+    public Map<String, Double> getWorkedHoursPerProject(String projectName) {
+        Map<String, Double> result = new LinkedHashMap<>();
+
+        String sql = """
+                SELECT project_name, SUM(worked_hours)
+                FROM time_entries
+                WHERE project_name LIKE ?
+                GROUP BY project_name
+            """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, projectName);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String name = rs.getString("project_name");
+                    double hours = rs.getDouble(2);
+                    result.put(name, hours);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Query error: " + e.getMessage());
+        }
+
+        return result;
+    }
+
+    public Map<String, Double> getWorkedHoursPerDay() {
+        Map<String, Double> result = new LinkedHashMap<>();
+        String sql = "SELECT entry_date, SUM(worked_hours) FROM time_entries GROUP BY entry_date";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                result.put(rs.getString(1), rs.getDouble(2));
+            }
+        } catch (SQLException e) {
+            System.out.println("Query error: " + e.getMessage());
+        }
+
+        return result;
+    }
+
+    public double getWorkedHoursForParticularDay(LocalDate date) {
+        String sql = """
+                SELECT SUM(worked_hours) as total_hours
+                FROM time_entries
+                WHERE entry_date = ?
+                """;
+        double hours = 0;
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, date.toString());
+            ResultSet rs = pstmt.executeQuery();
+
+            hours = rs.getDouble("total_hours");
+        } catch (SQLException e) {
+            System.err.println("Query error: " + e.getMessage());
+        }
+
+        return hours;
+    }
+
+    public Map<LocalDate, Map<String, Double>> getWeeklyProjectReport(LocalDate start, LocalDate end) {
+        Map<LocalDate, Map<String, Double>> weeklyData = new TreeMap<>();
+
+        String sql = """
+            SELECT entry_date, project_name, SUM(worked_hours) as total_hours
+            FROM time_entries
+            WHERE entry_date BETWEEN ? AND ?
+            GROUP BY entry_date, project_name
+            ORDER BY entry_date, project_name;
+            """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, start.toString());
+            pstmt.setString(2, end.toString());
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                LocalDate date = LocalDate.parse(rs.getString("entry_date"));
+                String projectName = rs.getString("project_name");
+                double hours = rs.getDouble("total_hours");
+
+                // Get or create the map for this date
+                Map<String, Double> projectHours = weeklyData.getOrDefault(date, new HashMap<>());
+                projectHours.put(projectName, hours);
+                weeklyData.put(date, projectHours);
+            }
+        } catch (SQLException e) {
+            System.err.println("Query error: " + e.getMessage());
+        }
+
+        return weeklyData;
     }
 }
