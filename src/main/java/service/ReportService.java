@@ -58,14 +58,12 @@ public class ReportService {
         }
     }
 
-    public void getWeeklyProjectBreakdown() {
-        LocalDate start = LocalDate.now().with(DayOfWeek.MONDAY);
-        LocalDate end = LocalDate.now().with(DayOfWeek.SUNDAY);
+    public void getTimePeriodProjectBreakdown(LocalDate start, LocalDate end) {
 
         Map<LocalDate, Map<String, Double>> weeklyData =  db.getWeeklyProjectReport(start, end);
 
         System.out.println("=".repeat(65));
-        System.out.printf("WEEKLY PROJECT HOURS REPORT: %s / %s%n", start, end);
+        System.out.printf("TIME PERIOD OF THE REPORT: %s / %s%n", start, end);
         System.out.println("=".repeat(65));
 
         // For each day of the week
@@ -123,7 +121,7 @@ public class ReportService {
         // Print grand total
         double grandTotal = projectTotals.values().stream().mapToDouble(Double::doubleValue).sum();
         System.out.println("-".repeat(80));
-        System.out.printf("%-50s | %-10.2f%n", "GRAND TOTAL", grandTotal);
+        System.out.printf("%-50s | %-10s%n", "GRAND TOTAL", formatHoursToHHMM(grandTotal));
         System.out.println("=".repeat(80));
     }
 

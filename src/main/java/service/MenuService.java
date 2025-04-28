@@ -2,6 +2,7 @@ package service;
 
 import record.TimeEntry;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Scanner;
 
@@ -43,7 +44,6 @@ public class MenuService {
     }
 
     private void insertTimeMenu() {
-        //TODO Show the latest 5 different project names and give an option to select one of them or write your own.
         printLatestFiveProjectsFromDb();
         TimeEntry entry = logService.getUserInput();
         logService.insertEntry(entry);
@@ -61,7 +61,7 @@ public class MenuService {
                         1. Daily reports
                         2. Total worked hours per project
                         3. Total worked hours per project for the current week
-                        4. Weekly project breakdown
+                        4. Time period project breakdown
                         5. Back
                     """);
             String choice = scanner.nextLine();
@@ -69,11 +69,35 @@ public class MenuService {
                 case "1" -> showHoursPerDaySubmenu();
                 case "2" -> showProjectReportsSubmenu();
                 case "3" -> reportWeeklyProjectHours();
-                case "4" -> getWeeklyProjectBreakdown();
+                case "4" -> showTimePeriodBreakdownSubMenu();
                 case "5" -> {
                     return;
                 }
                 default -> System.out.println("Invalid choice.");
+            }
+        }
+    }
+
+    private void showTimePeriodBreakdownSubMenu() {
+        while (true) {
+            System.out.println("""
+                        --- TIME PERIOD BREAKDOWNS ---
+                        1. Current week
+                        2. Specific time period
+                        3. Back
+                    """);
+            String choice = scanner.nextLine();
+            switch (choice) {
+                case "1":
+                    getCurrentWeekBreakdown();
+                    break;
+                case "2":
+                    getTimePeriodBreakdown();
+                    break;
+                case "3":
+                    return;
+                default:
+                    System.out.println("Invalid choice.");
             }
         }
     }
@@ -92,8 +116,13 @@ public class MenuService {
                     getAllWorkedHoursPerDay();
                     break;
                 case "2":
-                    System.out.print("Enter date (YYYY-MM-DD): ");
-                    LocalDate date = LocalDate.parse(scanner.nextLine());
+                    System.out.print("Enter date (YYYY-MM-DD / today): ");
+                    String input = scanner.nextLine().toLowerCase();
+                    LocalDate date = switch (input) {
+                        case "today" -> LocalDate.now();
+                        case "yesterday" -> LocalDate.now().minusDays(1);
+                        default -> LocalDate.parse(input);
+                    };
                     getWorkedHoursForParticularDay(date);
                     break;
                 case "3":
@@ -130,8 +159,20 @@ public class MenuService {
         reportService.getWorkedHoursForParticularDay(date);
     }
 
-    private void getWeeklyProjectBreakdown() {
-        reportService.getWeeklyProjectBreakdown();
+    private void getCurrentWeekBreakdown() {
+        LocalDate start = LocalDate.now().with(DayOfWeek.MONDAY);
+        LocalDate end = LocalDate.now().with(DayOfWeek.SUNDAY);
+
+        reportService.getTimePeriodProjectBreakdown(start, end);
+    }
+
+    private void getTimePeriodBreakdown() {
+        System.out.print("Enter the start date (YYYY-MM-DD): ");
+        LocalDate start = LocalDate.parse(scanner.nextLine());
+        System.out.print("Enter the end date (YYYY-MM-DD): ");
+        LocalDate end = LocalDate.parse(scanner.nextLine());
+
+        reportService.getTimePeriodProjectBreakdown(start, end);
     }
 
     private void getAllWorkedHoursPerDay() {
