@@ -11,4 +11,5 @@ repositories {
 
 dependencies {
     implementation 'org.xerial:sqlite-jdbc:3.43.0.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
 }

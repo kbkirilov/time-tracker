@@ -28,4 +28,8 @@ bin/
 ### Mac OS ###
 .DS_Store
 
+### Custom files ####
 timelog.db
+
+#### Gradle ####
+.gradle/
