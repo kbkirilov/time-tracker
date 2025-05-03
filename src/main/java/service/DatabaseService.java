@@ -1,7 +1,6 @@
 package service;
 
 import java.sql.*;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -9,8 +8,9 @@ import java.util.*;
 
 import record.TimeEntry;
 
+import static utils.Constants.*;
+
 public class DatabaseService {
-    private static final String DB_URL = "jdbc:sqlite:timelog.db";
 
     public DatabaseService() {
         createTableIfNotExists();
@@ -37,7 +37,7 @@ public class DatabaseService {
         }
     }
 
-    public void insert(TimeEntry entry, double hours) {
+    public void createEntry(TimeEntry entry, double hours) {
         String sql = """
                     INSERT INTO time_entries(project_name, entry_date, start_time, end_time, worked_hours, created_at)
                                                VALUES (?, ?, ?, ?, ?, ?);
@@ -61,7 +61,6 @@ public class DatabaseService {
             System.out.println("Insert error: " + e.getMessage());
         }
     }
-
 
     public void deleteEntryById(int id) {
         String sql = "DELETE FROM time_entries WHERE id = ?";

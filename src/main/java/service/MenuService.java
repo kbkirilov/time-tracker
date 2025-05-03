@@ -9,11 +9,13 @@ import java.util.Scanner;
 public class MenuService {
     private final LogService logService;
     private final ReportService reportService;
+    private final InputService inputService;
     private final Scanner scanner = new Scanner(System.in);
 
-    public MenuService(LogService logService, ReportService reportService) {
+    public MenuService(LogService logService, ReportService reportService, InputService inputService) {
         this.reportService = reportService;
         this.logService = logService;
+        this.inputService = inputService;
     }
 
     public void run() {
@@ -45,8 +47,8 @@ public class MenuService {
 
     private void insertTimeMenu() {
         printLatestFiveProjectsFromDb();
-        TimeEntry entry = logService.getUserInput();
-        logService.insertEntry(entry);
+        TimeEntry entry = inputService.getUserInput();
+        logService.logInsertEntry(entry);
         System.out.println("Time logged successfully.");
     }
 
@@ -185,7 +187,7 @@ public class MenuService {
 
         try {
             int id = Integer.parseInt(input);
-            logService.deleteEntry(id);
+            logService.logDeleteEntry(id);
         } catch (NumberFormatException e) {
             System.out.println("Invalid ID format.");
         }

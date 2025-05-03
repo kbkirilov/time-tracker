@@ -15,4 +15,6 @@ public class Constants {
     public static final int LARGE_DELIMITER_COUNT = 80;
     public static final int SMALL_DELIMITER_COUNT = 65;
 
+    public static final String DB_URL = "jdbc:sqlite:timelog.db";
+
 }

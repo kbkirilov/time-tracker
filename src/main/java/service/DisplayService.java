@@ -2,6 +2,8 @@ package service;
 
 import java.util.Map;
 
+import static utils.TimeFormatter.*;
+
 public class DisplayService {
     public void printTwoColumnsTableWithContent(String header1, String header2, Map<String, Double> map) {
         printTwoColumnHeaders(header1, header2);
@@ -38,12 +40,5 @@ public class DisplayService {
         System.out.println("=".repeat(65));
         System.out.printf("%-50s | %-10s%n", header1, header2);
         System.out.println("=".repeat(65));
-    }
-
-    private String formatHoursToHHMM(double hours) {
-        int totalMinutes = (int) Math.round(hours * 60);
-        int h = totalMinutes / 60;
-        int m = totalMinutes % 60;
-        return String.format("%02d:%02d hours", h, m);
     }
 }
