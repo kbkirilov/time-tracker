@@ -12,7 +12,7 @@ import java.util.Scanner;
 public class LogService {
     private final DatabaseService db;
 
-    public LogService(Scanner scanner, DatabaseService db) {
+    public LogService(DatabaseService db) {
         this.db = db;
     }
 
