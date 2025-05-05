@@ -17,4 +17,10 @@ public class Constants {
 
     public static final String DB_URL = "jdbc:sqlite:timelog.db";
 
+    // Menu constants
+    public static final String INVALID_CHOICE_MESSAGE = "Invalid choice. Please try again.";
+    public static final String BACK_MESSAGE = "Returning to previous menu...";
+    public static final String GOODBYE_MESSAGE = "Thank you for using the Time Tracker. Goodbye!";
+    public static final String SUCCESSFUL_TIME_LOG = "Time logged successfully.";
+
 }

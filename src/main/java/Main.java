@@ -1,4 +1,7 @@
 import service.*;
+import service.menus.MainMenuService;
+import service.menus.TimeLogMenuService;
+import service.menus.reports.ReportMenuService;
 
 import java.util.Scanner;
 
@@ -8,10 +11,19 @@ public class Main {
         DisplayService displayService = new DisplayService();
         ReportService reportService = new ReportService(dbService, displayService);
         Scanner scanner = new Scanner(System.in);
+        MainMenuService mainMenuService = getMainMenuService(scanner, dbService, reportService);
+
+        mainMenuService.run();
+    }
+
+    private static MainMenuService getMainMenuService(Scanner scanner, DatabaseService dbService, ReportService reportService) {
         InputService inputService = new InputService(scanner);
         LogService logService = new LogService(dbService);
-        MenuService menuService = new MenuService(logService, reportService, inputService);
+        TimeLogMenuService timeLogMenuService = new TimeLogMenuService(logService, reportService, inputService, scanner);
+        ReportMenuService reportMenuService = new ReportMenuService(reportService, scanner);
 
-        menuService.run();
+        MainMenuService mainMenuService = new MainMenuService(logService, reportService, inputService, timeLogMenuService,
+                reportMenuService, scanner);
+        return mainMenuService;
     }
 }
