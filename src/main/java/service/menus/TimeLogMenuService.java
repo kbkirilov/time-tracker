@@ -72,6 +72,8 @@ public class TimeLogMenuService extends MenuBase {
 
         try {
             int id = Integer.parseInt(input);
+            // TODO deletionWarning(id) to be implemented
+//            deletionWarning(id);
             logService.logDeleteEntry(id);
             System.out.println("Entry deleted successfully.");
         } catch (NumberFormatException e) {
@@ -84,4 +86,9 @@ public class TimeLogMenuService extends MenuBase {
     private void editTimeEntry() {
         // TODO Needs implementation
     }
+
+//    private void deletionWarning(int id) {
+//        System.out.println("Are you sure you want to delete the below time entry?");
+//
+//    }
 }

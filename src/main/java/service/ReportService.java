@@ -53,7 +53,7 @@ public class ReportService {
         while (!current.isAfter(end)) {
             Map<String, Double> dayProjects = result.getOrDefault(current, Collections.emptyMap());
 
-            System.out.println("\n" + formatDateWithDayOfWeek(current.toString()));
+            displayService.printDateAndDayOfWeek(current);
             displayService.printTwoColumnHeaders(PROJECT_NAME_HEADER, HOURS_HEADER, ROW_DELIMITER);
 
             if (dayProjects.isEmpty()) {
@@ -70,41 +70,30 @@ public class ReportService {
             current = current.plusDays(1);
         }
 
-        // Calculate and print weekly totals per project
-        System.out.println("\n" + "=".repeat(80));
-        System.out.println("WEEKLY TOTALS PER PROJECT");
-        displayService.printTwoColumnHeaders(PROJECT_NAME_HEADER, TOTAL_HOURS, HEADER_DELIMITER,
-                ROW_DELIMITER, LARGE_DELIMITER_COUNT);
-
         Map<String, Double> projectTotals = new HashMap<>();
         for (Map<String, Double> dayDate : result.values()) {
             for (Map.Entry<String, Double> entry : dayDate.entrySet()) {
-                String project = entry.getKey();
+                String projectName = entry.getKey();
                 double hours = entry.getValue();
-                projectTotals.put(project, projectTotals.getOrDefault(project, 0.00) + hours);
+                projectTotals.put(projectName, projectTotals.getOrDefault(projectName, 0.00) + hours);
             }
         }
 
-        // Sort projects by total hours (descending)
-        List<Map.Entry<String, Double>> sortedProjects = new ArrayList<>(projectTotals.entrySet());
-        sortedProjects.sort(Map.Entry.<String, Double>comparingByValue().reversed());
+        // If the map contains information for more than 1 day
+        if (!start.isEqual(end)) {
+            displayService.printTotalsPerProjectHeaders();
 
-        // Print each project's weekly total
-        for (Map.Entry<String, Double> entry : sortedProjects) {
-            System.out.printf("%-50s | %-10s%n", entry.getKey(), formatHoursToHHMM(entry.getValue()));
+            List<Map.Entry<String, Double>> sortedProjects = new ArrayList<>(projectTotals.entrySet());
+            sortedProjects.sort(Map.Entry.<String, Double>comparingByValue().reversed());
+
+            for (Map.Entry<String, Double> entry : sortedProjects) {
+                displayService.printRow(entry.getKey(), formatHoursToHHMM(entry.getValue()));
+            }
+
+            double grandTotal = projectTotals.values().stream().mapToDouble(Double::doubleValue).sum();
+            displayService.printTwoColumnHeaders(GRAND_TOTAL, formatHoursToHHMM(grandTotal),
+                    ROW_DELIMITER, HEADER_DELIMITER, LARGE_DELIMITER_COUNT);
         }
-
-        // Print grand total
-        double grandTotal = projectTotals.values().stream().mapToDouble(Double::doubleValue).sum();
-        displayService.printTwoColumnHeaders(GRAND_TOTAL, formatHoursToHHMM(grandTotal),
-                ROW_DELIMITER, HEADER_DELIMITER, LARGE_DELIMITER_COUNT);
-    }
-
-    private String formatDateWithDayOfWeek(String dateStr) {
-        LocalDate date = LocalDate.parse(dateStr);
-
-        DayOfWeek dayOfWeek = date.getDayOfWeek();
-        return String.format("%s / %s", dateStr, dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault()));
     }
 
     private String formatHoursToHHMM(double hours) {
