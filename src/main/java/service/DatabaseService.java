@@ -213,7 +213,7 @@ public class DatabaseService {
         String sql = """
                 SELECT DISTINCT project_name
                 FROM time_entries
-                ORDER BY created_at ASC
+                ORDER BY created_at DESC
                 LIMIT 5
                 """;
 

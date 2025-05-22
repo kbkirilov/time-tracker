@@ -11,6 +11,7 @@ public class Constants {
     public static final String GRAND_TOTAL = "GRAND TOTAL";
     public static final String DAILY_TOTAL = "DAILY TOTAL";
     public static final String DATE = "DATE";
+    public static final int HEADER_STRING_MAX_LENGTH = 50;
 
     public static final int LARGE_DELIMITER_COUNT = 80;
     public static final int SMALL_DELIMITER_COUNT = 65;
