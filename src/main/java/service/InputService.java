@@ -33,4 +33,39 @@ public class InputService {
 
         return new TimeEntry(projectName, date, start, end);
     }
+
+    public TimeEntry getEditInput(TimeEntry currentEntry) {
+        System.out.print("Project name [" + currentEntry.projectName() + "]: ");
+        String projectName = scanner.nextLine().trim();
+        if (projectName.isEmpty()) {
+            projectName = currentEntry.projectName();
+        }
+
+        System.out.println("Date (yyyy-MM-dd or 'today') [" + currentEntry.date() + "]: ");
+        String dateInput = scanner.nextLine().trim();
+        LocalDate date = LocalDate.parse(String.valueOf(currentEntry.date()));
+        if (!dateInput.isEmpty()) {
+            if (dateInput.equalsIgnoreCase("today")) {
+                date = LocalDate.now();
+            } else {
+                date = LocalDate.parse(dateInput);
+            }
+        }
+
+        System.out.println("Start Time (HH:mm) [" + currentEntry.start() + "]:");
+        String startTimeInput = scanner.nextLine().trim();
+        LocalTime startTime = currentEntry.start();
+        if (!startTimeInput.isEmpty()) {
+            startTime = LocalTime.parse(startTimeInput, timeFormatter);
+        }
+
+        System.out.println("End Time (HH:mm) [" + currentEntry.end() + "]:");
+        String endTimeInput = scanner.nextLine().trim();
+        LocalTime endTime = currentEntry.end();
+        if (!endTimeInput.isEmpty()) {
+            endTime = LocalTime.parse(endTimeInput, timeFormatter);
+        }
+
+        return new TimeEntry(projectName, date, startTime, endTime);
+    }
 }

@@ -3,6 +3,7 @@ package service;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -111,11 +112,11 @@ public class DatabaseService {
         Map<String, Double> result = new LinkedHashMap<>();
 
         String sql = """
-                SELECT project_name, SUM(worked_hours)
-                FROM time_entries
-                WHERE project_name LIKE ?
-                GROUP BY project_name
-            """;
+                    SELECT project_name, SUM(worked_hours)
+                    FROM time_entries
+                    WHERE project_name LIKE ?
+                    GROUP BY project_name
+                """;
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -177,12 +178,12 @@ public class DatabaseService {
         Map<LocalDate, Map<String, Double>> weeklyData = new TreeMap<>();
 
         String sql = """
-            SELECT entry_date, project_name, SUM(worked_hours) as total_hours
-            FROM time_entries
-            WHERE entry_date BETWEEN ? AND ?
-            GROUP BY entry_date, project_name
-            ORDER BY entry_date, project_name;
-            """;
+                SELECT entry_date, project_name, SUM(worked_hours) as total_hours
+                FROM time_entries
+                WHERE entry_date BETWEEN ? AND ?
+                GROUP BY entry_date, project_name
+                ORDER BY entry_date, project_name;
+                """;
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -255,5 +256,59 @@ public class DatabaseService {
         }
 
         return result;
+    }
+
+    public TimeEntry getTimeEntryById(int id) {
+        String sql = """
+                SELECT *
+                FROM time_entries
+                WHERE id = ?
+                """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new TimeEntry(
+                            rs.getString("project_name"),
+                            LocalDate.parse(rs.getString("entry_date")),
+                            LocalTime.parse(rs.getString("start_time")),
+                            LocalTime.parse(rs.getString("end_time"))
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void updateEntryById(int id, TimeEntry entry, double roundedHours) {
+        String sql = """
+            UPDATE time_entries
+            SET project_name = ?,
+                entry_date = ?,
+                start_time = ?,
+                end_time = ?,
+                worked_hours = ?
+            WHERE id = ?
+            """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, entry.projectName());
+            pstmt.setString(2, entry.date().toString());
+            pstmt.setString(3, entry.start().toString());
+            pstmt.setString(4, entry.end().toString());
+            pstmt.setDouble(5, roundedHours);
+            pstmt.setInt(6, id);
+
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println("Update error: " + e.getMessage());
+        }
     }
 }

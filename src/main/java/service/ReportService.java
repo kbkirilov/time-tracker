@@ -1,5 +1,7 @@
 package service;
 
+import record.TimeEntry;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
@@ -107,9 +109,12 @@ public class ReportService {
     }
 
     public void printEntryDetails(int id) {
-        System.out.println("\nAre you sure you want to delete the below time entry?");
         Map<String, Double> map = db.getEntryDetailsById(id);
         displayService.printRow(map);
+    }
+
+    public TimeEntry getTimeEntryById(int id) {
+        return db.getTimeEntryById(id);
     }
 
     private String formatHoursToHHMM(double hours) {
@@ -118,4 +123,6 @@ public class ReportService {
         int m = totalMinutes % 60;
         return String.format("%02d:%02d hours", h, m);
     }
+
+
 }
