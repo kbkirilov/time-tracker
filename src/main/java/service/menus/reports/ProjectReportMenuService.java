@@ -24,7 +24,7 @@ public class ProjectReportMenuService extends MenuBase {
 
         while (isRunning) {
             display("PROJECT REPORTS",
-                    "View hours by project name",
+                    "View hours by project's name",
                     "Back to reports menu");
 
             int choice = getChoice();
@@ -41,6 +41,7 @@ public class ProjectReportMenuService extends MenuBase {
     }
 
     private void getHoursByProjectName() {
+        reportService.printLastFiveUniqueProjectNames();
         displayMenuHeader("PROJECT HOURS");
         System.out.println("Enter project name: ");
         String projectName = scanner.nextLine();

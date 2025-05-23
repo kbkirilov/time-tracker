@@ -2,7 +2,6 @@ package service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.format.TextStyle;
 import java.util.*;
 
 import static utils.Constants.*;
@@ -102,15 +101,21 @@ public class ReportService {
         }
     }
 
+    public void printLastFiveUniqueProjectNames() {
+        List<String> list = db.getLastFiveUniqueProjectNames();
+        displayService.printLastFiveUniqueProjectNames(list);
+    }
+
+    public void printEntryDetails(int id) {
+        System.out.println("\nAre you sure you want to delete the below time entry?");
+        Map<String, Double> map = db.getEntryDetailsById(id);
+        displayService.printRow(map);
+    }
+
     private String formatHoursToHHMM(double hours) {
         int totalMinutes = (int) Math.round(hours * 60);
         int h = totalMinutes / 60;
         int m = totalMinutes % 60;
         return String.format("%02d:%02d hours", h, m);
-    }
-
-    public void printLastFiveUniqueProjectNames() {
-        List<String> list = db.getLastFiveUniqueProjectNames();
-        displayService.printLastFiveUniqueProjectNames(list);
     }
 }

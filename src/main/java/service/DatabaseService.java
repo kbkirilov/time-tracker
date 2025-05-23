@@ -230,4 +230,30 @@ public class DatabaseService {
 
         return result;
     }
+
+    public Map<String, Double> getEntryDetailsById(int id) {
+        Map<String, Double> result = new HashMap<>();
+
+        String sql = """
+                SELECT project_name, worked_hours
+                FROM time_entries
+                WHERE id = ?
+                """;
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String name = rs.getString("project_name");
+                    double hours = rs.getDouble(2);
+                    result.put(name, hours);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Query error: " + e.getMessage());
+        }
+
+        return result;
+    }
 }

@@ -72,10 +72,13 @@ public class TimeLogMenuService extends MenuBase {
 
         try {
             int id = Integer.parseInt(input);
-            // TODO deletionWarning(id) to be implemented
-//            deletionWarning(id);
-            logService.logDeleteEntry(id);
-            System.out.println("Entry deleted successfully.");
+
+            if (showDeletionWarning(id)) {
+                logService.logDeleteEntry(id);
+                System.out.println("Entry deleted successfully.");
+            } else {
+                System.out.println("Deletion cancelled.");
+            }
         } catch (NumberFormatException e) {
             System.out.println("Invalid ID format. Please enter a numeric ID.");
         } catch (Exception e) {
@@ -87,8 +90,13 @@ public class TimeLogMenuService extends MenuBase {
         // TODO Needs implementation
     }
 
-    private void deletionWarning(int id) {
-        System.out.println("Are you sure you want to delete the below time entry?");
+    private boolean showDeletionWarning(int id) {
+        reportService.printEntryDetails(id);
 
+        System.out.println("\n⚠️  WARNING: This action cannot be undone!");
+        System.out.print("Are you sure you want to delete this time entry? (y/N): ");
+
+        String confirmation = scanner.nextLine().trim().toLowerCase();
+        return confirmation.equals("y") || confirmation.equals("yes");
     }
 }

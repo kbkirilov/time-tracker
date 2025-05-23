@@ -69,6 +69,12 @@ public class DisplayService {
         System.out.printf("%-50s | %-10s%n", truncateIfLong(value1), value2);
     }
 
+    public void printRow(Map<String, Double> map) {
+        for (Map.Entry<String, Double> entry : map.entrySet()) {
+            printRow(entry.getKey(), String.valueOf(entry.getValue()));
+        }
+    }
+
     public void printTableHeader(String header, String value1, String value2) {
         System.out.println("=".repeat(SMALL_DELIMITER_COUNT));
         System.out.printf("%s: %s / %s%n",header, value1, value2);
