@@ -34,7 +34,6 @@ public class ReportMenuService extends MenuBase {
             display("REPORTS",
                     "Daily Reports",
                     "Project Reports",
-                    "Weekly Reports",
                     "Custom Period Reports",
                     "Back to main menu");
 
@@ -48,13 +47,9 @@ public class ReportMenuService extends MenuBase {
                     projectReportMenuService.show();
                     break;
                 case 3:
-                    // TODO The below method returns only the current weeks reports
-                    reportService.reportWeeklyProjectHours();
-                    break;
-                case 4:
                     periodReportMenuService.show();
                     break;
-                case 5:
+                case 4:
                     isRunning = false;
                     back();
                     break;

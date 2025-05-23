@@ -54,8 +54,8 @@ public class TimeLogMenuService extends MenuBase {
      * Handles the process of inserting a new time entry.
      */
     private void insertTimeEntry() {
-        displayMenuHeader("LOG NEW TIME ENTRY");
         reportService.printLastFiveUniqueProjectNames();
+        displayMenuHeader("LOG NEW TIME ENTRY");
         TimeEntry entry = inputService.getUserInput();
         logService.logInsertEntry(entry);
         System.out.println(SUCCESSFUL_TIME_LOG);
@@ -87,8 +87,8 @@ public class TimeLogMenuService extends MenuBase {
         // TODO Needs implementation
     }
 
-//    private void deletionWarning(int id) {
-//        System.out.println("Are you sure you want to delete the below time entry?");
-//
-//    }
+    private void deletionWarning(int id) {
+        System.out.println("Are you sure you want to delete the below time entry?");
+
+    }
 }

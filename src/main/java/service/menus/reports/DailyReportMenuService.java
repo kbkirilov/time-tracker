@@ -40,10 +40,13 @@ public class DailyReportMenuService extends MenuBase {
                     getSpecificDayReport();
                     break;
                 case 3:
-                    getWorkedHoursForParticularDay(LocalDate.now());
+                    reportService.getTimePeriodProjectBreakdown(LocalDate.now(), LocalDate.now());
                     break;
                 case 4:
-                    getWorkedHoursForParticularDay(LocalDate.now().minusDays(1));
+                    reportService.getTimePeriodProjectBreakdown(
+                            LocalDate.now().minusDays(1),
+                            LocalDate.now().minusDays(1)
+                    );
                     break;
                 case 5:
                     isRunning = false;
@@ -58,16 +61,16 @@ public class DailyReportMenuService extends MenuBase {
 
     /**
      * Gets a specific day's report from user input.
+     * Note
      */
     private void getSpecificDayReport() {
-        displayMenuHeader("SPECIFIC DAY REPORT");
         System.out.print("Enter date (YYYY-MM-DD): ");
 
         String input = scanner.nextLine();
 
         try {
             LocalDate date = LocalDate.parse(input, DateTimeFormatter.ISO_LOCAL_DATE);
-            getWorkedHoursForParticularDay(date);
+            reportService.getTimePeriodProjectBreakdown(date, date);
         } catch (DateTimeParseException e) {
             System.out.println("Invalid date format. Please use YYYY-MM-DD format.");
         }
@@ -87,7 +90,6 @@ public class DailyReportMenuService extends MenuBase {
      * @param date The date to get the report for
      */
     private void getWorkedHoursForParticularDay(LocalDate date) {
-        System.out.println("\n--- REPORT FOR " + date + " ---");
-        reportService.getWorkedHoursForParticularDay(date);
+        reportService.getTimePeriodProjectBreakdown(date, date);
     }
 }

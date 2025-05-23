@@ -43,6 +43,12 @@ public class ReportService {
         displayService.printTwoColumnsTableWithContent(PROJECT_NAME_HEADER, HOURS_HEADER, result);
     }
 
+    /**
+     *
+     * @param start The start date of the report
+     * @param end The end date of the report
+     * @implNote To get a report for a single date, once can pass the same date as the start and end
+     */
     public void getTimePeriodProjectBreakdown(LocalDate start, LocalDate end) {
         Map<LocalDate, Map<String, Double>> result = db.getWeeklyProjectReport(start, end);
 
@@ -92,7 +98,7 @@ public class ReportService {
 
             double grandTotal = projectTotals.values().stream().mapToDouble(Double::doubleValue).sum();
             displayService.printTwoColumnHeaders(GRAND_TOTAL, formatHoursToHHMM(grandTotal),
-                    ROW_DELIMITER, HEADER_DELIMITER, LARGE_DELIMITER_COUNT);
+                    ROW_DELIMITER, HEADER_DELIMITER);
         }
     }
 
@@ -105,11 +111,6 @@ public class ReportService {
 
     public void printLastFiveUniqueProjectNames() {
         List<String> list = db.getLastFiveUniqueProjectNames();
-        System.out.println("Last 5 projects from the database:");
-        System.out.println("=".repeat(65));
-        for (String s : list) {
-            System.out.println(s);
-        }
-        System.out.println();
+        displayService.printLastFiveUniqueProjectNames(list);
     }
 }
