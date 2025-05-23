@@ -19,7 +19,7 @@ public class InputService {
 
     public TimeEntry getUserInput() {
         System.out.print("Enter project name or choose from the above: ");
-        String projectName = scanner.nextLine();
+        String projectName = scanner.nextLine().trim();
 
         System.out.print("Enter date (yyyy-MM-dd or 'today'): ");
         String dateInput = scanner.nextLine();
