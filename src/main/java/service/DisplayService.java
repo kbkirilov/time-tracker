@@ -1,12 +1,13 @@
 package service;
 
+import record.TimeEntry;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.RecursiveTask;
 
 import static utils.Constants.*;
 import static utils.Constants.LARGE_DELIMITER_COUNT;
@@ -99,6 +100,23 @@ public class DisplayService {
             System.out.println(s);
         }
         System.out.println();
+    }
+
+    public void displayTimeEntryDetails(TimeEntry entry) {
+        System.out.printf("Project name: %s, Entry date: %s, Start time: %s, End time: %s%n",
+                entry.projectName(),
+                entry.date(),
+                entry.start(),
+                entry.end());
+    }
+
+    public void displayTimeEntryDetails(TimeEntry entry, double roundedHours) {
+        System.out.printf("Project name: %s, Entry date: %s, Start time: %s, End time: %s, Rounded Hours: %f %n",
+                entry.projectName(),
+                entry.date(),
+                entry.start(),
+                entry.end(),
+                roundedHours);
     }
 
     private String truncateIfLong(String str) {

@@ -18,7 +18,8 @@ public class Main {
 
     private static MainMenuService getMainMenuService(Scanner scanner, DatabaseService dbService, ReportService reportService) {
         InputService inputService = new InputService(scanner);
-        LogService logService = new LogService(dbService);
+        DisplayService displayService = new DisplayService();
+        LogService logService = new LogService(dbService, displayService);
         TimeLogMenuService timeLogMenuService = new TimeLogMenuService(logService, reportService, inputService, scanner);
         ReportMenuService reportMenuService = new ReportMenuService(reportService, scanner);
 
