@@ -32,6 +32,7 @@ public class DatabaseService {
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement()) {
+            conn.setAutoCommit(true);
             stmt.execute(sql);
         } catch (SQLException e) {
             System.out.println("DB init error: " + e.getMessage());
@@ -46,6 +47,7 @@ public class DatabaseService {
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
             pstmt.setString(1, entry.projectName());
             pstmt.setString(2, entry.date().toString());
             pstmt.setString(3, entry.start().toString());
@@ -68,6 +70,7 @@ public class DatabaseService {
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
             pstmt.setInt(1, id);
 
             int rowsAffected = pstmt.executeUpdate();
@@ -92,6 +95,7 @@ public class DatabaseService {
                 """;
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
             pstmt.setString(1, start.toString());
             pstmt.setString(2, end.toString());
             ResultSet rs = pstmt.executeQuery();
@@ -120,6 +124,7 @@ public class DatabaseService {
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
             pstmt.setString(1, projectName);
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -143,6 +148,7 @@ public class DatabaseService {
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
+            conn.setAutoCommit(true);
 
             while (rs.next()) {
                 result.put(rs.getString(1), rs.getDouble(2));
@@ -163,6 +169,7 @@ public class DatabaseService {
         double hours = 0;
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
             pstmt.setString(1, date.toString());
             ResultSet rs = pstmt.executeQuery();
 
@@ -187,6 +194,7 @@ public class DatabaseService {
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
             pstmt.setString(1, start.toString());
             pstmt.setString(2, end.toString());
             ResultSet rs = pstmt.executeQuery();
@@ -221,6 +229,7 @@ public class DatabaseService {
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
+            conn.setAutoCommit(true);
 
             while (rs.next()) {
                 result.add(rs.getString(1));
@@ -242,6 +251,7 @@ public class DatabaseService {
                 """;
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
             pstmt.setInt(1, id);
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -267,6 +277,7 @@ public class DatabaseService {
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
             pstmt.setInt(1, id);
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -298,6 +309,7 @@ public class DatabaseService {
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
             pstmt.setString(1, entry.projectName());
             pstmt.setString(2, entry.date().toString());
             pstmt.setString(3, entry.start().toString());
@@ -310,5 +322,29 @@ public class DatabaseService {
         } catch (SQLException e) {
             System.out.println("Update error: " + e.getMessage());
         }
+    }
+
+    public String getLastEntry() {
+        String lastEntry = "";
+
+        String sql = """
+                SELECT project_name
+                FROM time_entries
+                ORDER BY created_at DESC
+                LIMIT 1
+                """;
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            conn.setAutoCommit(true);
+
+            if (rs.next()) {
+                lastEntry = rs.getString("project_name");
+            }
+        } catch (SQLException e) {
+            System.out.println("Query error: " + e.getMessage());
+        }
+
+        return lastEntry;
     }
 }
