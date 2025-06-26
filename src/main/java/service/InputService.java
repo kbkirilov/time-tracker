@@ -11,15 +11,20 @@ public class InputService {
     private final Scanner scanner;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+    private final DatabaseService databaseService;
 
-    public InputService(Scanner scanner) {
+    public InputService(Scanner scanner, DatabaseService databaseService) {
         this.scanner = scanner;
-
+        this.databaseService = databaseService;
     }
 
     public TimeEntry getUserInput() {
-        System.out.print("Enter project name or choose from the above: ");
+        System.out.printf("Enter project name or choose from the above, or hit ENTER for the last entry (%s): ",
+                databaseService.getLastEntry());
         String projectName = scanner.nextLine().trim();
+        if (projectName.isEmpty()) {
+            projectName = databaseService.getLastEntry();
+        }
 
         System.out.print("Enter date (yyyy-MM-dd or 'today'): ");
         String dateInput = scanner.nextLine();
