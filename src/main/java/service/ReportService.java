@@ -25,7 +25,7 @@ public class ReportService {
 
     public void getWorkedHoursPerProject(String projectName) {
         Map<String, Double> result = db.getWorkedHoursPerProject(projectName);
-        displayService.printTwoColumnsTableWithContent(PROJECT_NAME_HEADER, TOTAL_HOURS, result);
+        displayService.printThreeColumnTableWithContent(PROJECT_NAME_HEADER, TOTAL_HOURS, TOTAL_DAYS, result);
     }
 
     public void getWorkedHoursForParticularDay(LocalDate date) {
@@ -106,6 +106,11 @@ public class ReportService {
     public void printLastFiveUniqueProjectNames() {
         List<String> list = db.getLastFiveUniqueProjectNames();
         displayService.printLastFiveUniqueProjectNames(list);
+    }
+
+    public void printLastTenProjectNamesWithIds() {
+        TreeMap<Integer, String> map = db.getLastTenProjectNamesWithIds();
+        displayService.printLastTenProjectNamesWithIds(map);
     }
 
     public void printEntryDetails(int id) {

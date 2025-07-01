@@ -67,6 +67,7 @@ public class TimeLogMenuService extends MenuBase {
      * Handles the process of deleting a time entry.
      */
     private void deleteTimeEntry() {
+        reportService.printLastTenProjectNamesWithIds();
         displayMenuHeader("DELETE TIME ENTRY");
         System.out.print("Enter the ID of the entry to delete: ");
 
@@ -89,6 +90,7 @@ public class TimeLogMenuService extends MenuBase {
     }
 
     private void editTimeEntry() {
+        reportService.printLastTenProjectNamesWithIds();
         displayMenuHeader("EDIT TIME ENTRY");
         System.out.print("Enter the ID of the entry to edit: ");
 

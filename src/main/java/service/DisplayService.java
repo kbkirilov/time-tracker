@@ -5,12 +5,10 @@ import record.TimeEntry;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import static utils.Constants.*;
-import static utils.Constants.LARGE_DELIMITER_COUNT;
+import static utils.Constants.DELIMITER_COUNT_80;
 import static utils.TimeFormatter.*;
 
 public class DisplayService {
@@ -21,7 +19,23 @@ public class DisplayService {
 
         for (Map.Entry<String, Double> entry : map.entrySet()) {
             System.out.printf("%-50s | %-10s%n", truncateIfLong(entry.getKey()), formatHoursToHHMM(entry.getValue()));
-            System.out.println("-".repeat(SMALL_DELIMITER_COUNT));
+            System.out.println("-".repeat(DELIMITER_COUNT_65));
+        }
+    }
+
+    public void printThreeColumnTableWithContent(String header1, String header2, String header3, Map<String, Double> map) {
+        int size = map.size();
+        int counter = 0;
+
+        printThreeColumnHeaders(header1, header2, header3);
+
+        for (Map.Entry<String, Double> entry : map.entrySet()) {
+            System.out.printf("%-50s | %-10s | %-10s%n",
+                    truncateIfLong(entry.getKey()), formatHoursToHHMM(entry.getValue()), formatHoursToDays(entry.getValue()));
+            counter++;
+            if (size > 1 && counter < size) {
+                System.out.println("-".repeat(DELIMITER_COUNT_80));
+            }
         }
     }
 
@@ -32,9 +46,15 @@ public class DisplayService {
      * @param delimiter The delimiter used
      */
     public void printTwoColumnHeaders(String header1, String header2, String delimiter) {
-        System.out.println(delimiter.repeat(SMALL_DELIMITER_COUNT));
+        System.out.println(delimiter.repeat(DELIMITER_COUNT_65));
         System.out.printf("%-50s | %-10s%n", header1, header2);
-        System.out.println(delimiter.repeat(SMALL_DELIMITER_COUNT));
+        System.out.println(delimiter.repeat(DELIMITER_COUNT_65));
+    }
+
+    public void printThreeColumnHeaders(String header1, String header2, String header3) {
+        System.out.println("=".repeat(DELIMITER_COUNT_80));
+        System.out.printf("%-50s | %-10s | %-10s%n", header1, header2, header3);
+        System.out.println("=".repeat(DELIMITER_COUNT_80));
     }
 
     /**
@@ -43,9 +63,9 @@ public class DisplayService {
      * @param header2 Second column header
      */
     public void printTwoColumnHeaders(String header1, String header2) {
-        System.out.println("=".repeat(SMALL_DELIMITER_COUNT));
+        System.out.println("=".repeat(DELIMITER_COUNT_65));
         System.out.printf("%-50s | %-10s%n", header1, header2);
-        System.out.println("=".repeat(SMALL_DELIMITER_COUNT));
+        System.out.println("=".repeat(DELIMITER_COUNT_65));
     }
 
     /**
@@ -56,9 +76,9 @@ public class DisplayService {
      * @param endDelimiter The end delimiter symbol
      */
     public void printTwoColumnHeaders(String header1, String header2, String startDelimiter, String endDelimiter) {
-        System.out.println(startDelimiter.repeat(SMALL_DELIMITER_COUNT));
+        System.out.println(startDelimiter.repeat(DELIMITER_COUNT_65));
         System.out.printf("%-50s | %-10s%n", header1, header2);
-        System.out.println(endDelimiter.repeat(SMALL_DELIMITER_COUNT));
+        System.out.println(endDelimiter.repeat(DELIMITER_COUNT_65));
     }
 
     /**
@@ -70,6 +90,10 @@ public class DisplayService {
         System.out.printf("%-50s | %-10s%n", truncateIfLong(value1), value2);
     }
 
+    public void printRow(String value1, String value2, int distance1, int distance2) {
+        System.out.printf("%-" + distance1 + "s | %-" + distance2 + "s%n", truncateIfLong(value1), value2);
+    }
+
     public void printRow(Map<String, Double> map) {
         for (Map.Entry<String, Double> entry : map.entrySet()) {
             printRow(entry.getKey(), String.valueOf(entry.getValue()));
@@ -77,9 +101,9 @@ public class DisplayService {
     }
 
     public void printTableHeader(String header, String value1, String value2) {
-        System.out.println("=".repeat(SMALL_DELIMITER_COUNT));
+        System.out.println("=".repeat(DELIMITER_COUNT_65));
         System.out.printf("%s: %s / %s%n",header, value1, value2);
-        System.out.println("=".repeat(SMALL_DELIMITER_COUNT));
+        System.out.println("=".repeat(DELIMITER_COUNT_65));
     }
 
     public void printDateAndDayOfWeek(LocalDate date) {
@@ -87,7 +111,7 @@ public class DisplayService {
     }
 
     public void printTotalsPerProjectHeaders() {
-        System.out.println("\n" + "=".repeat(LARGE_DELIMITER_COUNT));
+        System.out.println("\n" + "=".repeat(DELIMITER_COUNT_80));
         System.out.println("TOTALS PER PROJECT");
         printTwoColumnHeaders(PROJECT_NAME_HEADER, TOTAL_HOURS, HEADER_DELIMITER,
                 ROW_DELIMITER);
@@ -100,6 +124,12 @@ public class DisplayService {
             System.out.println(s);
         }
         System.out.println();
+    }
+
+    public void printLastTenProjectNamesWithIds(TreeMap<Integer, String> map) {
+        for (Map.Entry<Integer, String> entry : map.entrySet()) {
+            printRow(String.valueOf(entry.getKey()), String.valueOf(entry.getValue()), 2, 5);
+        }
     }
 
     public void displayTimeEntryDetails(TimeEntry entry) {
