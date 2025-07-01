@@ -241,6 +241,33 @@ public class DatabaseService {
         return result;
     }
 
+    public TreeMap<Integer, String> getLastTenProjectNamesWithIds() {
+        TreeMap<Integer, String> result = new TreeMap<>();
+
+        String sql = """
+                SELECT id, project_name
+                FROM time_entries
+                ORDER BY created_at DESC
+                LIMIT 10
+                """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            conn.setAutoCommit(true);
+
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                String project_name = rs.getString(2);
+                result.put(id, project_name);
+            }
+        } catch (SQLException e) {
+            System.out.println("Query error: " + e.getMessage());
+        }
+
+        return result;
+    }
+
     public Map<String, Double> getEntryDetailsById(int id) {
         Map<String, Double> result = new HashMap<>();
 
