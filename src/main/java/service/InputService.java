@@ -20,18 +20,26 @@ public class InputService {
 
     public TimeEntry getUserInput() {
         System.out.printf("Enter project name or choose from the above, or hit ENTER for the last entry (%s): ",
-                databaseService.getLastEntry());
+                databaseService.getLastEntryProjectName());
         String projectName = scanner.nextLine().trim();
         if (projectName.isEmpty()) {
-            projectName = databaseService.getLastEntry();
+            projectName = databaseService.getLastEntryProjectName();
         }
 
-        System.out.print("Enter date (yyyy-MM-dd or 'today'): ");
+        System.out.print("Enter date (yyyy-MM-dd or hit ENTER for (today): ");
         String dateInput = scanner.nextLine();
+        if (dateInput.isEmpty()) {
+            dateInput = "today";
+        }
         LocalDate date = dateInput.equalsIgnoreCase("today") ? LocalDate.now() : LocalDate.parse(dateInput, dateFormatter);
 
-        System.out.print("Enter start time (HH:mm): ");
-        LocalTime start = LocalTime.parse(scanner.nextLine(), timeFormatter);
+        System.out.printf("Enter start time (HH:mm) or hit ENTER for last task's end time (%s): ",
+                databaseService.getLastEntryEndTime());
+        String startTime = scanner.nextLine();
+        if (startTime.isEmpty()) {
+            startTime = databaseService.getLastEntryEndTime();
+        }
+        LocalTime start = LocalTime.parse(startTime, timeFormatter);
 
         System.out.print("Enter end time (HH:mm): ");
         LocalTime end = LocalTime.parse(scanner.nextLine(), timeFormatter);

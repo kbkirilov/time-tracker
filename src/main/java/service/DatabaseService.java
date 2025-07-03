@@ -351,7 +351,7 @@ public class DatabaseService {
         }
     }
 
-    public String getLastEntry() {
+    public String getLastEntryProjectName() {
         String lastEntry = "";
 
         String sql = """
@@ -373,5 +373,30 @@ public class DatabaseService {
         }
 
         return lastEntry;
+    }
+
+    public String getLastEntryEndTime() {
+        String lastEntryEndTime = "";
+
+        String sql = """
+                SELECT end_time
+                FROM time_entries
+                ORDER BY created_at DESC
+                LIMIT 1
+                """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            conn.setAutoCommit(true);
+
+            if (rs.next()) {
+                lastEntryEndTime = rs.getString("end_time");
+            }
+        } catch (SQLException e) {
+            System.out.println("Query error: " + e.getMessage());
+        }
+
+        return lastEntryEndTime;
     }
 }
