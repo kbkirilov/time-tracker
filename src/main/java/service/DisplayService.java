@@ -1,6 +1,7 @@
 package service;
 
 import record.TimeEntry;
+import record.TimeEstimate;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -147,6 +148,19 @@ public class DisplayService {
                 entry.start(),
                 entry.end(),
                 roundedHours);
+    }
+
+    public void displayTimeEstimateDetails(TimeEstimate entry, double totalHours) {
+        System.out.printf("%nProject name: %s%n" +
+                "CD1 time estimate: %.2f%n" +
+                "CD2 time estimate: %.2f%n" +
+                "PF time estimate: %.2f%n" +
+                "Total estimate hours: %.2f%n",
+                entry.projectName(),
+                entry.cd1EstimateHours(),
+                entry.cd2EstimateHours(),
+                entry.pfEstimateHours(),
+                totalHours);
     }
 
     private String truncateIfLong(String str) {

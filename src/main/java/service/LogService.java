@@ -1,12 +1,9 @@
 package service;
 
 import record.TimeEntry;
+import record.TimeEstimate;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
 
 
 public class LogService {
@@ -18,14 +15,22 @@ public class LogService {
         this.displayService = displayService;
     }
 
-    public void logInsertEntry(TimeEntry entry) {
+    public void logInsertTimeEntry(TimeEntry entry) {
         double roundedHours = calculateRoundedHours(entry);
 
         System.out.println("Logging time for project: " + entry.projectName());
         displayService.displayTimeEntryDetails(entry, roundedHours);
         //        System.out.println("Date: " + entry.date() + ", Start: " + entry.start() + ", End: " + entry.end() + ", Hours: " + roundedHours);
 
-        db.createEntry(entry, roundedHours);
+        db.createTimeEntry(entry, roundedHours);
+    }
+
+    public void logInsertTimeEstimate(TimeEstimate entry) {
+        double totalHours = calculateTotalHours(entry);
+
+        displayService.displayTimeEstimateDetails(entry, totalHours);
+
+        db.createTimeEstimateEntry(entry, totalHours);
     }
 
     public void logDeleteEntry(int id) {
@@ -46,6 +51,10 @@ public class LogService {
     private double calculateRoundedHours(TimeEntry entry) {
         double hours = Duration.between(entry.start(), entry.end()).toMinutes() / 60.0;
         return (double) Math.round(hours * 1000.0) / 1000;
+    }
+
+    private double calculateTotalHours(TimeEstimate entry) {
+        return entry.cd1EstimateHours() + entry.cd2EstimateHours() + entry.pfEstimateHours();
     }
 }
 

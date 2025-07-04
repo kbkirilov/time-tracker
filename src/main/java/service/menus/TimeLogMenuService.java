@@ -58,8 +58,8 @@ public class TimeLogMenuService extends MenuBase {
     private void insertTimeEntry() {
         reportService.printLastFiveUniqueProjectNames();
         displayMenuHeader("LOG NEW TIME ENTRY");
-        TimeEntry entry = inputService.getUserInput();
-        logService.logInsertEntry(entry);
+        TimeEntry entry = inputService.getTimeEntryInput();
+        logService.logInsertTimeEntry(entry);
         System.out.println(SUCCESSFUL_TIME_LOG);
     }
 

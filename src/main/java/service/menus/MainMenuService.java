@@ -17,14 +17,16 @@ public class MainMenuService extends MenuBase {
     private final InputService inputService;
 
     private final TimeLogMenuService timeLogMenuService;
+    private final TimeEstimatesMenuService timeEstimatesMenuService;
     private final ReportMenuService reportMenuService;
 
     public MainMenuService(LogService logService, ReportService reportService, InputService inputService,
-                           TimeLogMenuService timeLogMenuService, ReportMenuService reportMenuService, Scanner scanner) {
+                           TimeLogMenuService timeLogMenuService, ReportMenuService reportMenuService, Scanner scanner, TimeEstimatesMenuService timeEstimatesMenuService) {
         super(scanner);
         this.logService = logService;
         this.reportService = reportService;
         this.inputService = inputService;
+        this.timeEstimatesMenuService = timeEstimatesMenuService;
 
         this.timeLogMenuService = new TimeLogMenuService(logService, reportService, inputService, scanner);
         this.reportMenuService = new ReportMenuService(reportService, scanner);
@@ -47,6 +49,7 @@ public class MainMenuService extends MenuBase {
         while (isRunning) {
             display("MAIN MENU",
                     "Time tracking",
+                    "Time estimates",
                     "Reports",
                     "Exit");
 
@@ -54,8 +57,9 @@ public class MainMenuService extends MenuBase {
 
             switch (choice) {
                 case 1 -> timeLogMenuService.show();
-                case 2 -> reportMenuService.show();
-                case 3 -> {
+                case 2 -> timeEstimatesMenuService.show();
+                case 3 -> reportMenuService.show();
+                case 4 -> {
                     System.out.println(GOODBYE_MESSAGE);
                     isRunning = false;
                 }

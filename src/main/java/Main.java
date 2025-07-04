@@ -1,5 +1,6 @@
 import service.*;
 import service.menus.MainMenuService;
+import service.menus.TimeEstimatesMenuService;
 import service.menus.TimeLogMenuService;
 import service.menus.reports.ReportMenuService;
 
@@ -27,10 +28,11 @@ public class Main {
         DisplayService displayService = new DisplayService();
         LogService logService = new LogService(dbService, displayService);
         TimeLogMenuService timeLogMenuService = new TimeLogMenuService(logService, reportService, inputService, scanner);
+        TimeEstimatesMenuService timeEstimatesMenuService = new TimeEstimatesMenuService(scanner, inputService, logService);
         ReportMenuService reportMenuService = new ReportMenuService(reportService, scanner);
 
         MainMenuService mainMenuService = new MainMenuService(logService, reportService, inputService, timeLogMenuService,
-                reportMenuService, scanner);
+                reportMenuService, scanner, timeEstimatesMenuService);
         return mainMenuService;
     }
 }

@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import record.TimeEntry;
+import record.TimeEstimate;
 
 import static utils.Constants.*;
 
@@ -61,7 +62,7 @@ public class DatabaseService {
         }
     }
 
-    public void createEntry(TimeEntry entry, double hours) {
+    public void createTimeEntry(TimeEntry entry, double hours) {
         String sql = """
                     INSERT INTO time_entries(project_name, entry_date, start_time, end_time, worked_hours, created_at)
                                                VALUES (?, ?, ?, ?, ?, ?);
@@ -77,6 +78,31 @@ public class DatabaseService {
             pstmt.setDouble(5, hours);
 
             // Добавяме локален timestamp
+            String timestamp = LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            pstmt.setString(6, timestamp);
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Insert error: " + e.getMessage());
+        }
+    }
+
+    public void createTimeEstimateEntry(TimeEstimate entry, double totalHours) {
+        String sql = """
+                INSERT INTO time_estimates(project_name, cd1_estimate_hours, cd2_estimate_hours, pf_estimate_hours, total_estimate_hours, created_at)
+                                           VALUES (?, ?, ?, ?, ?, ?);
+                """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
+            pstmt.setString(1, entry.projectName());
+            pstmt.setDouble(2, entry.cd1EstimateHours());
+            pstmt.setDouble(3, entry.cd2EstimateHours());
+            pstmt.setDouble(4, entry.pfEstimateHours());
+            pstmt.setDouble(5, totalHours);
+
             String timestamp = LocalDateTime.now()
                     .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             pstmt.setString(6, timestamp);

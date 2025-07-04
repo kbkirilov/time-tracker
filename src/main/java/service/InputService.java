@@ -1,6 +1,7 @@
 package service;
 
 import record.TimeEntry;
+import record.TimeEstimate;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,7 +19,7 @@ public class InputService {
         this.databaseService = databaseService;
     }
 
-    public TimeEntry getUserInput() {
+    public TimeEntry getTimeEntryInput() {
         System.out.printf("Enter project name or choose from the above, or hit ENTER for the last entry (%s): ",
                 databaseService.getLastEntryProjectName());
         String projectName = scanner.nextLine().trim();
@@ -45,6 +46,37 @@ public class InputService {
         LocalTime end = LocalTime.parse(scanner.nextLine(), timeFormatter);
 
         return new TimeEntry(projectName, date, start, end);
+    }
+
+    public TimeEstimate getTimeEstimateInput() {
+        System.out.println("Enter project name: ");
+        String projectName = scanner.nextLine().trim();
+        while (projectName.isEmpty()) {
+            System.out.println("Project name cannot be empty. Please try again: ");
+            projectName = scanner.nextLine().trim();
+        }
+
+        double cd1EstimateHours = readDoubleWithPrompt("Enter the [CD1] (Client Draft 1) estimate hours (HH): ");
+        double cd2EstimateHours = readDoubleWithPrompt("Enter the [CD2] (Client Draft 2) estimate hours (HH): ");
+        double pfEstimateHours = readDoubleWithPrompt("Enter the [PR] (Proposed Final) estimate hours (HH): ");
+
+        return new TimeEstimate(projectName, cd1EstimateHours, cd2EstimateHours, pfEstimateHours);
+    }
+
+    private double readDoubleWithPrompt(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) {
+                System.out.println("Input cannot be empty.");
+                continue;
+            }
+            try {
+                return Double.parseDouble(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid number. Please try again.");
+            }
+        }
     }
 
     public TimeEntry getEditInput(TimeEntry currentEntry) {
