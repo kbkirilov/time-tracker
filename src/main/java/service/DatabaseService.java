@@ -15,6 +15,7 @@ public class DatabaseService {
 
     public DatabaseService() {
         createTimeEntriesIfNotExists();
+        createTimeEstimatesIfNotExists();
     }
 
     private void createTimeEntriesIfNotExists() {
@@ -30,6 +31,27 @@ public class DatabaseService {
                 );
                 """;
 
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement stmt = conn.createStatement()) {
+            conn.setAutoCommit(true);
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            System.out.println("DB init error: " + e.getMessage());
+        }
+    }
+
+    private void createTimeEstimatesIfNotExists() {
+        String sql = """
+                CREATE TABLE IF NOT EXISTS time_estimates (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    project_name TEXT,
+                    cd1_estimate_hours REAL,
+                    cd2_estimate_hours REAL,
+                    pf_estimate_hours REAL,
+                    total_estimate_hours REAL,
+                    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                );
+                """;
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement()) {
             conn.setAutoCommit(true);
