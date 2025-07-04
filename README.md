@@ -4,7 +4,7 @@ A time tracking application I created to help me track my working hours.
 
 ## New features suggestion
 
-#1 - <u>__Show last 10 projects with their id's when you go into Time tracking__</u> -> Edit Time Entry/Delete time entry.
+- [x] #1 - <u>__Show last 10 projects with their id's when you go into Time tracking__</u> -> Edit Time Entry/Delete time entry.
 This will make accessing the right Time Entry much easier, without the need of going to the db table and checking 
 the entry's id.<br>
 
@@ -12,7 +12,7 @@ the entry's id.<br>
 by RS for each project. This can be used to check how much time left I have on a project. It could be used for notifications 
 in case I can put in more time for a project.<br>
 
-#3 <u>__Showing hours on edited entry too__</u> - At the moment when finish editing a Time Entry, the last step if to confirm 
+- [x] #3 <u>__Showing hours on edited entry too__</u> - At the moment when finish editing a Time Entry, the last step if to confirm 
 the changes. This information is shown for the original entry and the updated entry:
 <br>*Original: Project name: DRE01119_SC03_REGENCY_GRAPHITE_III, Entry date: 2025-06-27, Start time: 11:00, End time: 11:30*
 <br>*Updated: Project name: DRE01119_SC03_REGENCY_GRAPHITE_III, Entry date: 2025-06-27, Start time: 11:00, End time: 12:30*
@@ -24,13 +24,16 @@ I want to show the total hours per Time Entry on this confirmation step. Like th
 <br>*...Start time: 11:00, End time: 12:30, Hours: 1.5*
 <br>
 
-#4 <u>__Show days worked for a particular project__</u> -> When I pull in a project report by project name, I need to also
+- [x] #4 <u>__Show days worked for a particular project__</u> -> When I pull in a project report by project name, I need to also
 get the days I have worked on this project. So I need a third column 'days'.
 
-#5 <u>__Make 'today' the default when you enter a day for a time Entry__</u>
+- [x] #5 <u>__Make 'today' the default when you enter a day for a time Entry__</u>
 
-#6 <u>__Make 'Enter start time' default value equals the 'end_time' of the last entry in database__</u> -> This way you don't have to
+- [x] #6 <u>__Make 'Enter start time' default value equals the 'end_time' of the last entry in database__</u> -> This way you don't have to
 go to the database sheet to look when did you finish the last task.
+
+- [ ] #6 <u>__Make 'Enter end time' default value equals the current time__</u> -> When you enter a new time entry the end time is usually what
+the current time is. So a default value for the current time would be very handy. 
 
 ## Fixes suggestions
 

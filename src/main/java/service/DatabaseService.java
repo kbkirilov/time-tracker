@@ -14,10 +14,10 @@ import static utils.Constants.*;
 public class DatabaseService {
 
     public DatabaseService() {
-        createTableIfNotExists();
+        createTimeEntriesIfNotExists();
     }
 
-    private void createTableIfNotExists() {
+    private void createTimeEntriesIfNotExists() {
         String sql = """
                 CREATE TABLE IF NOT EXISTS time_entries (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
