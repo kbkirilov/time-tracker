@@ -30,6 +30,7 @@ bin/
 
 ### Custom files ####
 timelog.db
+BACKLOG.md
 
 #### Gradle ####
 .gradle/
