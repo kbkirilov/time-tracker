@@ -138,11 +138,13 @@ public class DisplayService {
         double roundedHours = calculateRoundedHours(entry);
 
         System.out.printf("Project name: %s%n " +
+                        "Project stage: %s%n" +
                         "Entry date: %s%n " +
                         "Start time: %s%n " +
-                        "End time: %s " +
+                        "End time: %s%n " +
                         "Rounded Hours: %f %n",
                 entry.projectName(),
+                entry.projectStage(),
                 entry.date(),
                 entry.start(),
                 entry.end(),

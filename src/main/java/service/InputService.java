@@ -27,6 +27,16 @@ public class InputService {
             projectName = databaseService.getLastEntryProjectName();
         }
 
+        System.out.print("Enter project stage (CD1, CD2, PF, NA): ");
+        String projectStage = scanner.nextLine().trim();
+        while (!projectStage.equals("CD1") &&
+                !projectStage.equals("CD2") &&
+                !projectStage.equals("PF") &&
+                !projectStage.equals("NA")) {
+            System.out.print("Invalid project stage. Enter a valid project stage: ");
+            projectStage = scanner.nextLine().trim();
+        }
+
         System.out.print("Enter date (yyyy-MM-dd or hit ENTER for (today): ");
         String dateInput = scanner.nextLine();
         if (dateInput.isEmpty()) {
@@ -45,7 +55,7 @@ public class InputService {
         System.out.print("Enter end time (HH:mm): ");
         LocalTime end = LocalTime.parse(scanner.nextLine(), timeFormatter);
 
-        return new TimeEntry(projectName, date, start, end);
+        return new TimeEntry(projectName, projectStage, date, start, end);
     }
 
     public TimeEstimate getTimeEstimateInput() {
@@ -86,6 +96,16 @@ public class InputService {
             projectName = currentEntry.projectName();
         }
 
+        System.out.println("Enter project stage (CD1, CD2, PF, NA): ");
+        String projectStage = scanner.nextLine().trim();
+        while (!projectStage.equals("CD1") &&
+                !projectStage.equals("CD2") &&
+                !projectStage.equals("PF") &&
+                !projectStage.equals("NA")) {
+            System.out.print("Invalid project stage. Enter a valid project stage: ");
+            projectStage = scanner.nextLine().trim();
+        }
+
         System.out.println("Date (yyyy-MM-dd or 'today') [" + currentEntry.date() + "]: ");
         String dateInput = scanner.nextLine().trim();
         LocalDate date = LocalDate.parse(String.valueOf(currentEntry.date()));
@@ -111,7 +131,7 @@ public class InputService {
             endTime = LocalTime.parse(endTimeInput, timeFormatter);
         }
 
-        return new TimeEntry(projectName, date, startTime, endTime);
+        return new TimeEntry(projectName, projectStage, date, startTime, endTime);
     }
 
     public TimeEstimate getTimeEstimateEditInput(TimeEstimate currentEntry) {

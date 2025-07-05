@@ -151,8 +151,8 @@ public class DatabaseService {
 
     public void createTimeEntry(TimeEntry entry, double hours) {
         String sql = """
-                    INSERT INTO time_entries(project_name, entry_date, start_time, end_time, worked_hours, created_at)
-                                               VALUES (?, ?, ?, ?, ?, ?);
+                    INSERT INTO time_entries(project_name, entry_date, start_time, end_time, worked_hours, created_at, project_stages)
+                                               VALUES (?, ?, ?, ?, ?, ?, ?);
                 """;
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -168,6 +168,7 @@ public class DatabaseService {
             String timestamp = LocalDateTime.now()
                     .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             pstmt.setString(6, timestamp);
+            pstmt.setString(7, entry.projectStage());
 
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -516,6 +517,7 @@ public class DatabaseService {
                 if (rs.next()) {
                     return new TimeEntry(
                             rs.getString("project_name"),
+                            rs.getString("project_stages"),
                             LocalDate.parse(rs.getString("entry_date")),
                             LocalTime.parse(rs.getString("start_time")),
                             LocalTime.parse(rs.getString("end_time"))
