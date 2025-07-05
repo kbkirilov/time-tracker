@@ -1,6 +1,7 @@
 package service.menus;
 
 import record.TimeEntry;
+import service.DisplayService;
 import service.InputService;
 import service.LogService;
 import service.ReportService;
@@ -19,12 +20,14 @@ public class TimeLogMenuService extends MenuBase {
     private final LogService logService;
     private final ReportService reportService;
     private final InputService inputService;
+    private final DisplayService displayService;
 
-    public TimeLogMenuService(LogService logService, ReportService reportService, InputService inputService, Scanner scanner) {
+    public TimeLogMenuService(LogService logService, ReportService reportService, InputService inputService, Scanner scanner, DisplayService displayService) {
         super(scanner);
         this.logService = logService;
         this.reportService = reportService;
         this.inputService = inputService;
+        this.displayService = displayService;
     }
 
     @Override
@@ -110,14 +113,14 @@ public class TimeLogMenuService extends MenuBase {
             }
 
             System.out.println("\nCurrent entry details:");
-            System.out.println(currentEntry.toString());
+            displayService.displayTimeEntryDetails(currentEntry);
 
             System.out.println("\nEnter new values (press Enter to keep current value):");
 
-            TimeEntry updatedEntry = inputService.getEditInput(currentEntry);
+            TimeEntry updatedEntry = inputService.getTimeEntryEditInput(currentEntry);
 
-            if (showEditConfirmation(currentEntry, updatedEntry)) {
-                logService.logUpdateEntry(id, updatedEntry);
+            if (showEditConfirmation(currentEntry, updatedEntry, scanner)) {
+                logService.logUpdateTimeEntry(id, updatedEntry);
                 System.out.println("Entry updated successfully.");
             } else {
                 System.out.println("Edit cancelled.");
@@ -128,15 +131,5 @@ public class TimeLogMenuService extends MenuBase {
         } catch (Exception e) {
             System.out.println("Error editing entry: " + e.getMessage());
         }
-    }
-
-    private boolean showEditConfirmation(TimeEntry current, TimeEntry updated) {
-        System.out.println("\n--- CONFIRM CHANGES ---");
-        System.out.println("Original: " + current.toString());
-        System.out.println("Updated: " + updated.toString());
-        System.out.print("\nSave these changes? (y/N): ");
-
-        String confirmation = scanner.nextLine().trim().toLowerCase();
-        return confirmation.equals("y") || confirmation.equals("yes");
     }
 }

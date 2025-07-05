@@ -27,12 +27,12 @@ public class Main {
         InputService inputService = new InputService(scanner, databaseService);
         DisplayService displayService = new DisplayService();
         LogService logService = new LogService(dbService, displayService);
-        TimeLogMenuService timeLogMenuService = new TimeLogMenuService(logService, reportService, inputService, scanner);
-        TimeEstimatesMenuService timeEstimatesMenuService = new TimeEstimatesMenuService(scanner, inputService, logService, reportService);
+        TimeLogMenuService timeLogMenuService = new TimeLogMenuService(logService, reportService, inputService, scanner, displayService);
+        TimeEstimatesMenuService timeEstimatesMenuService = new TimeEstimatesMenuService(scanner, inputService, logService, reportService, displayService);
         ReportMenuService reportMenuService = new ReportMenuService(reportService, scanner);
 
         MainMenuService mainMenuService = new MainMenuService(logService, reportService, inputService, timeLogMenuService,
-                reportMenuService, scanner, timeEstimatesMenuService);
+                reportMenuService, displayService, scanner, timeEstimatesMenuService);
         return mainMenuService;
     }
 }

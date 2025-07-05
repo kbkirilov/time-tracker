@@ -79,7 +79,7 @@ public class InputService {
         }
     }
 
-    public TimeEntry getEditInput(TimeEntry currentEntry) {
+    public TimeEntry getTimeEntryEditInput(TimeEntry currentEntry) {
         System.out.print("Project name [" + currentEntry.projectName() + "]: ");
         String projectName = scanner.nextLine().trim();
         if (projectName.isEmpty()) {
@@ -112,5 +112,43 @@ public class InputService {
         }
 
         return new TimeEntry(projectName, date, startTime, endTime);
+    }
+
+    public TimeEstimate getTimeEstimateEditInput(TimeEstimate currentEntry) {
+        double cd1EstimateHours;
+        double cd2EstimateHours;
+        double pfEstimateHours;
+
+        System.out.print("Project name [" + currentEntry.projectName() + "]: ");
+        String projectName = scanner.nextLine().trim();
+        if (projectName.isEmpty()) {
+            projectName = currentEntry.projectName();
+        }
+
+        System.out.print("Enter the [CD1] (Client Draft 1) estimate hours (HH): ");
+        String cd1EstimateHoursInput = scanner.nextLine().trim();
+        if (cd1EstimateHoursInput.isEmpty()) {
+            cd1EstimateHours = currentEntry.cd1EstimateHours();
+        } else {
+            cd1EstimateHours = Double.parseDouble(cd1EstimateHoursInput);
+        }
+
+        System.out.print("Enter the [CD2] (Client Draft 2) estimate hours (HH): ");
+        String cd2EstimateHoursInput = scanner.nextLine().trim();
+        if (cd2EstimateHoursInput.isEmpty()) {
+            cd2EstimateHours = currentEntry.cd2EstimateHours();
+        } else {
+            cd2EstimateHours = Double.parseDouble(cd2EstimateHoursInput);
+        }
+
+        System.out.print("Enter the [PR] (Proposed Final) estimate hours (HH): ");
+        String pfEstimateHoursInput = scanner.nextLine().trim();
+        if (pfEstimateHoursInput.isEmpty()) {
+            pfEstimateHours = currentEntry.pfEstimateHours();
+        } else {
+            pfEstimateHours = Double.parseDouble(pfEstimateHoursInput);
+        }
+
+        return new TimeEstimate(projectName, cd1EstimateHours, cd2EstimateHours, pfEstimateHours);
     }
 }

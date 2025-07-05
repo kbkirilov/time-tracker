@@ -441,7 +441,34 @@ public class DatabaseService {
         return null;
     }
 
-    public void updateEntryById(int id, TimeEntry entry, double roundedHours) {
+    public TimeEstimate getTimeEstimateById(int id) {
+        String sql = """
+                SELECT *
+                FROM time_estimates
+                WHERE id = ?
+                """;
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
+            pstmt.setInt(1, id);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new TimeEstimate(
+                            rs.getString("project_name"),
+                            rs.getDouble("cd1_estimate_hours"),
+                            rs.getDouble("cd2_estimate_hours"),
+                            rs.getDouble("pf_estimate_hours")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void updateTimeEntryById(int id, TimeEntry entry, double roundedHours) {
         String sql = """
             UPDATE time_entries
             SET project_name = ?,
@@ -460,6 +487,34 @@ public class DatabaseService {
             pstmt.setString(3, entry.start().toString());
             pstmt.setString(4, entry.end().toString());
             pstmt.setDouble(5, roundedHours);
+            pstmt.setInt(6, id);
+
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println("Update error: " + e.getMessage());
+        }
+    }
+
+    public void updateTimeEstimateById(int id, TimeEstimate entry, double totalHours) {
+        String sql = """
+            UPDATE time_estimates
+            SET project_name = ?,
+                cd1_estimate_hours = ?,
+                cd2_estimate_hours = ?,
+                pf_estimate_hours = ?,
+                total_estimate_hours = ?
+            WHERE id = ?
+            """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
+            pstmt.setString(1, entry.projectName());
+            pstmt.setDouble(2, entry.cd1EstimateHours());
+            pstmt.setDouble(3, entry.cd2EstimateHours());
+            pstmt.setDouble(4, entry.pfEstimateHours());
+            pstmt.setDouble(5, totalHours);
             pstmt.setInt(6, id);
 
             pstmt.executeUpdate();

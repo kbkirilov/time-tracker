@@ -1,5 +1,8 @@
 package utils;
 
+import record.TimeEntry;
+import record.TimeEstimate;
+
 import java.util.Scanner;
 
 /**
@@ -47,5 +50,27 @@ public class ConfirmationDialogUtil {
     public static boolean showCustomDeletionWarning(String warningMessage, String confirmMessage, Scanner scanner) {
         System.out.println("\n⚠️  WARNING: " + warningMessage);
         return showConfirmation(confirmMessage, scanner);
+    }
+
+    // TODO write a documentation for this method
+    public static boolean showEditConfirmation(TimeEntry current, TimeEntry updated, Scanner scanner) {
+        System.out.println("\n--- CONFIRM CHANGES ---");
+        System.out.println("Original: " + current.toString());
+        System.out.println("Updated: " + updated.toString());
+        System.out.print("\nSave these changes? (y/N): ");
+
+        String confirmation = scanner.nextLine().trim().toLowerCase();
+        return confirmation.equals("y") || confirmation.equals("yes");
+    }
+
+    // TODO write a documentation for this method
+    public static boolean showEditConfirmation(TimeEstimate current, TimeEstimate updated, Scanner scanner) {
+        System.out.println("\n--- CONFIRM CHANGES ---");
+        System.out.println("Original: " + current.toString());
+        System.out.println("Updated: " + updated.toString());
+        System.out.print("\nSave these changes? (y/N): ");
+
+        String confirmation = scanner.nextLine().trim().toLowerCase();
+        return confirmation.equals("y") || confirmation.equals("yes");
     }
 }

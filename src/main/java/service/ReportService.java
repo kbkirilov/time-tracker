@@ -1,6 +1,7 @@
 package service;
 
 import record.TimeEntry;
+import record.TimeEstimate;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -125,6 +126,10 @@ public class ReportService {
 
     public TimeEntry getTimeEntryById(int id) {
         return db.getTimeEntryById(id);
+    }
+
+    public TimeEstimate getTimeEstimateById(int id) {
+        return db.getTimeEstimateById(id);
     }
 
     private String formatHoursToHHMM(double hours) {

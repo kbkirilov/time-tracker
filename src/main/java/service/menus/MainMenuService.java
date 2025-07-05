@@ -1,5 +1,6 @@
 package service.menus;
 
+import service.DisplayService;
 import service.InputService;
 import service.LogService;
 import service.ReportService;
@@ -15,20 +16,22 @@ public class MainMenuService extends MenuBase {
     private final LogService logService;
     private final ReportService reportService;
     private final InputService inputService;
+    private final DisplayService displayService;
 
     private final TimeLogMenuService timeLogMenuService;
     private final TimeEstimatesMenuService timeEstimatesMenuService;
     private final ReportMenuService reportMenuService;
 
     public MainMenuService(LogService logService, ReportService reportService, InputService inputService,
-                           TimeLogMenuService timeLogMenuService, ReportMenuService reportMenuService, Scanner scanner, TimeEstimatesMenuService timeEstimatesMenuService) {
+                           TimeLogMenuService timeLogMenuService, ReportMenuService reportMenuService, DisplayService displayService, Scanner scanner, TimeEstimatesMenuService timeEstimatesMenuService) {
         super(scanner);
         this.logService = logService;
         this.reportService = reportService;
         this.inputService = inputService;
+        this.displayService = displayService;
         this.timeEstimatesMenuService = timeEstimatesMenuService;
 
-        this.timeLogMenuService = new TimeLogMenuService(logService, reportService, inputService, scanner);
+        this.timeLogMenuService = new TimeLogMenuService(logService, reportService, inputService, scanner, displayService);
         this.reportMenuService = new ReportMenuService(reportService, scanner);
     }
 

@@ -4,6 +4,7 @@ import record.TimeEntry;
 import record.TimeEstimate;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.*;
@@ -134,15 +135,13 @@ public class DisplayService {
     }
 
     public void displayTimeEntryDetails(TimeEntry entry) {
-        System.out.printf("Project name: %s, Entry date: %s, Start time: %s, End time: %s%n",
-                entry.projectName(),
-                entry.date(),
-                entry.start(),
-                entry.end());
-    }
+        double roundedHours = calculateRoundedHours(entry);
 
-    public void displayTimeEntryDetails(TimeEntry entry, double roundedHours) {
-        System.out.printf("Project name: %s, Entry date: %s, Start time: %s, End time: %s, Rounded Hours: %f %n",
+        System.out.printf("Project name: %s%n " +
+                        "Entry date: %s%n " +
+                        "Start time: %s%n " +
+                        "End time: %s " +
+                        "Rounded Hours: %f %n",
                 entry.projectName(),
                 entry.date(),
                 entry.start(),
@@ -150,7 +149,9 @@ public class DisplayService {
                 roundedHours);
     }
 
-    public void displayTimeEstimateDetails(TimeEstimate entry, double totalHours) {
+    public void displayTimeEstimateDetails(TimeEstimate entry) {
+        double totalHours = entry.cd1EstimateHours() + entry.cd2EstimateHours() + entry.pfEstimateHours();
+
         System.out.printf("%nProject name: %s%n" +
                 "CD1 time estimate: %.2f%n" +
                 "CD2 time estimate: %.2f%n" +
@@ -176,5 +177,10 @@ public class DisplayService {
 
         DayOfWeek dayOfWeek = date.getDayOfWeek();
         return String.format("%s / %s", dateStr, dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault()));
+    }
+
+    private double calculateRoundedHours(TimeEntry entry) {
+        double hours = Duration.between(entry.start(), entry.end()).toMinutes() / 60.0;
+        return (double) Math.round(hours * 1000.0) / 1000;
     }
 }
