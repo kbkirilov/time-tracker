@@ -127,7 +127,7 @@ public class DisplayService {
         System.out.println();
     }
 
-    public void printLastTenProjectNamesWithIds(TreeMap<Integer, String> map) {
+    public void printValuesFromSortedMap(TreeMap<Integer, String> map) {
         for (Map.Entry<Integer, String> entry : map.entrySet()) {
             printRow(String.valueOf(entry.getKey()), String.valueOf(entry.getValue()), 2, 5);
         }

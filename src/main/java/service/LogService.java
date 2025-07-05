@@ -33,11 +33,13 @@ public class LogService {
         db.createTimeEstimateEntry(entry, totalHours);
     }
 
-    public void logDeleteEntry(int id) {
-        db.deleteEntryById(id);  // без проверка
-        System.out.println("Attempted to delete entry with ID: " + id);
+    public void logDeleteTimeEntry(int id) {
+        db.deleteTimeEntryById(id);  // без проверка
     }
 
+    public void logDeleteTimeEstimateEntry(int id) {
+        db.deleteTimeEstimateEntryById(id);
+    }
 
     public void logUpdateEntry(int id, TimeEntry entry) {
         double roundedHours = calculateRoundedHours(entry);

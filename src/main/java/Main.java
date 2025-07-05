@@ -28,7 +28,7 @@ public class Main {
         DisplayService displayService = new DisplayService();
         LogService logService = new LogService(dbService, displayService);
         TimeLogMenuService timeLogMenuService = new TimeLogMenuService(logService, reportService, inputService, scanner);
-        TimeEstimatesMenuService timeEstimatesMenuService = new TimeEstimatesMenuService(scanner, inputService, logService);
+        TimeEstimatesMenuService timeEstimatesMenuService = new TimeEstimatesMenuService(scanner, inputService, logService, reportService);
         ReportMenuService reportMenuService = new ReportMenuService(reportService, scanner);
 
         MainMenuService mainMenuService = new MainMenuService(logService, reportService, inputService, timeLogMenuService,

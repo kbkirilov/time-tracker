@@ -108,13 +108,18 @@ public class ReportService {
         displayService.printLastFiveUniqueProjectNames(list);
     }
 
-    public void printLastTenProjectNamesWithIds() {
-        TreeMap<Integer, String> map = db.getLastTenProjectNamesWithIds();
-        displayService.printLastTenProjectNamesWithIds(map);
+    public void printLastTenTimeEntriesProjectNamesWithIds() {
+        TreeMap<Integer, String> map = db.getLastTenTimeEntriesProjectNamesWithIds();
+        displayService.printValuesFromSortedMap(map);
     }
 
-    public void printEntryDetails(int id) {
-        Map<String, Double> map = db.getEntryDetailsById(id);
+    public void printTimeEntryDetails(int id) {
+        Map<String, Double> map = db.getTimeEntryDetailsById(id);
+        displayService.printRow(map);
+    }
+
+    public void printTimeEstimateEntryDetails(int id) {
+        Map<String, Double> map = db.getTimeEstimatesEntryDetailsById(id);
         displayService.printRow(map);
     }
 
@@ -130,4 +135,8 @@ public class ReportService {
     }
 
 
+    public void printLastTenTimeEstimateEntriesProjectNamesWithIds() {
+        TreeMap<Integer, String> map = db.getLastTenTimeEstimatesProjectNamesWithId();
+        displayService.printValuesFromSortedMap(map);
+    }
 }

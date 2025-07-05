@@ -113,7 +113,7 @@ public class DatabaseService {
         }
     }
 
-    public void deleteEntryById(int id) {
+    public void deleteTimeEntryById(int id) {
         String sql = "DELETE FROM time_entries WHERE id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -122,9 +122,24 @@ public class DatabaseService {
             pstmt.setInt(1, id);
 
             int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Entry with ID " + id + " deleted successfully.");
-            } else {
+            if (rowsAffected <= 0) {
+                System.out.println("No entry found with ID " + id);
+            }
+        } catch (SQLException e) {
+            System.out.println("Delete error: " + e.getMessage());
+        }
+    }
+
+    public void deleteTimeEstimateEntryById(int id) {
+        String sql = "DELETE FROM time_estimates WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
+            pstmt.setInt(1, id);
+
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected <= 0) {
                 System.out.println("No entry found with ID " + id);
             }
         } catch (SQLException e) {
@@ -289,7 +304,7 @@ public class DatabaseService {
         return result;
     }
 
-    public TreeMap<Integer, String> getLastTenProjectNamesWithIds() {
+    public TreeMap<Integer, String> getLastTenTimeEntriesProjectNamesWithIds() {
         TreeMap<Integer, String> result = new TreeMap<>();
 
         String sql = """
@@ -316,7 +331,34 @@ public class DatabaseService {
         return result;
     }
 
-    public Map<String, Double> getEntryDetailsById(int id) {
+    public TreeMap<Integer, String> getLastTenTimeEstimatesProjectNamesWithId() {
+        TreeMap<Integer, String> result = new TreeMap<>();
+
+        String sql = """
+                SELECT id, project_name
+                FROM time_estimates
+                ORDER BY created_at DESC
+                LIMIT 10
+                """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            conn.setAutoCommit(true);
+
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                String project_name = rs.getString(2);
+                result.put(id, project_name);
+            }
+        } catch (SQLException e) {
+            System.out.println("Query error: " + e.getMessage());
+        }
+
+        return result;
+    }
+
+    public Map<String, Double> getTimeEntryDetailsById(int id) {
         Map<String, Double> result = new HashMap<>();
 
         String sql = """
@@ -324,6 +366,34 @@ public class DatabaseService {
                 FROM time_entries
                 WHERE id = ?
                 """;
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
+            pstmt.setInt(1, id);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String name = rs.getString("project_name");
+                    double hours = rs.getDouble(2);
+                    result.put(name, hours);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Query error: " + e.getMessage());
+        }
+
+        return result;
+    }
+
+    public Map<String, Double> getTimeEstimatesEntryDetailsById(int id) {
+        Map<String, Double> result = new HashMap<>();
+
+        String sql = """
+                SELECT project_name, total_estimate_hours
+                FROM time_estimates
+                WHERE id = ?
+                """;
+
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             conn.setAutoCommit(true);

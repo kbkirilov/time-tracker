@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 import static utils.Constants.INVALID_CHOICE_MESSAGE;
 import static utils.Constants.SUCCESSFUL_TIME_LOG;
+import static utils.ConfirmationDialogUtil.*;
 
 /**
  * Menu service for time tracking operations including
@@ -67,7 +68,7 @@ public class TimeLogMenuService extends MenuBase {
      * Handles the process of deleting a time entry.
      */
     private void deleteTimeEntry() {
-        reportService.printLastTenProjectNamesWithIds();
+        reportService.printLastTenTimeEntriesProjectNamesWithIds();
         displayMenuHeader("DELETE TIME ENTRY");
         System.out.print("Enter the ID of the entry to delete: ");
 
@@ -76,8 +77,10 @@ public class TimeLogMenuService extends MenuBase {
         try {
             int id = Integer.parseInt(input);
 
-            if (showDeletionWarning(id)) {
-                logService.logDeleteEntry(id);
+            reportService.printTimeEntryDetails(id);
+
+            if (showDeletionWarning(scanner)) {
+                logService.logDeleteTimeEntry(id);
                 System.out.println("Entry deleted successfully.");
             } else {
                 System.out.println("Deletion cancelled.");
@@ -90,7 +93,7 @@ public class TimeLogMenuService extends MenuBase {
     }
 
     private void editTimeEntry() {
-        reportService.printLastTenProjectNamesWithIds();
+        reportService.printLastTenTimeEntriesProjectNamesWithIds();
         displayMenuHeader("EDIT TIME ENTRY");
         System.out.print("Enter the ID of the entry to edit: ");
 
@@ -125,16 +128,6 @@ public class TimeLogMenuService extends MenuBase {
         } catch (Exception e) {
             System.out.println("Error editing entry: " + e.getMessage());
         }
-    }
-
-    private boolean showDeletionWarning(int id) {
-        reportService.printEntryDetails(id);
-
-        System.out.println("\n⚠️  WARNING: This action cannot be undone!");
-        System.out.print("Are you sure you want to delete this time entry? (y/N): ");
-
-        String confirmation = scanner.nextLine().trim().toLowerCase();
-        return confirmation.equals("y") || confirmation.equals("yes");
     }
 
     private boolean showEditConfirmation(TimeEntry current, TimeEntry updated) {
