@@ -13,10 +13,97 @@ import record.TimeEstimate;
 import static utils.Constants.*;
 
 public class DatabaseService {
+    private static final int CURRENT_SCHEMA_VERSION = 2;
 
     public DatabaseService() {
         createTimeEntriesIfNotExists();
         createTimeEstimatesIfNotExists();
+        migrateDatabase();
+    }
+
+    private void migrateDatabase() {
+        int currentVersion = getDatabaseVersion();
+
+        if (currentVersion < CURRENT_SCHEMA_VERSION) {
+            System.out.println("Migrating database from version " + currentVersion + " to " + CURRENT_SCHEMA_VERSION);
+
+            // Apply migrations in order
+            if (currentVersion < 2) {
+                migrateToVersion2();
+            }
+
+            // Future migrations would go here
+            // if (currentVersion < 3) { migrateToVersion3(); }
+
+            updateDatabaseVersion(CURRENT_SCHEMA_VERSION);
+            System.out.println("Database migration completed successfully");
+        }
+    }
+
+    private int getDatabaseVersion() {
+        String createVersionTableSql = """
+        CREATE TABLE IF NOT EXISTS schema_versions (
+            version INTEGER NOT NULL
+        );
+        """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement stmt = conn.createStatement()) {
+
+            conn.setAutoCommit(true);
+            stmt.execute(createVersionTableSql);
+
+            // Check if version exists
+            String getVersionSql = "SELECT version FROM schema_versions LIMIT 1";
+            try (ResultSet rs = stmt.executeQuery(getVersionSql)) {
+                if (rs.next()) {
+                    return rs.getInt("version");
+                } else {
+                    // First time setup - insert initial version
+                    stmt.execute("INSERT INTO schema_versions (version) VALUES (1)");
+                    return 1;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting database version: " + e.getMessage());
+            return 1; // Default to version 1
+        }
+    }
+
+    private void migrateToVersion2() {
+        String alterTableSql = """
+        ALTER TABLE time_entries
+        ADD COLUMN project_stages TEXT DEFAULT 'CD1';
+        """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement stmt = conn.createStatement()) {
+
+            conn.setAutoCommit(true);
+            stmt.execute(alterTableSql);
+
+            System.out.println("Added project_stages column to time_entries table");
+
+        } catch (SQLException e) {
+            System.err.println("Error migrating to version 2: " + e.getMessage());
+            throw new RuntimeException("Database migration failed", e);
+        }
+    }
+
+    private void updateDatabaseVersion(int version) {
+        String updateVersionSql = "UPDATE schema_versionS SET version = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(updateVersionSql)) {
+
+            conn.setAutoCommit(true);
+            pstmt.setInt(1, version);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error updating database version: " + e.getMessage());
+            throw new RuntimeException("Failed to update database version", e);
+        }
     }
 
     private void createTimeEntriesIfNotExists() {
