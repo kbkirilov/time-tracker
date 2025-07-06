@@ -1,5 +1,6 @@
 package service.menus.reports;
 
+import service.DisplayService;
 import service.ReportService;
 import service.menus.MenuBase;
 
@@ -13,13 +14,15 @@ public class ReportMenuService extends MenuBase {
     private final DailyReportMenuService dailyReportMenuService;
     private final ProjectReportMenuService projectReportMenuService;
     private final PeriodReportMenuService periodReportMenuService;
+    private final DisplayService displayService;
 
-    public ReportMenuService(ReportService reportService, Scanner scanner) {
+    public ReportMenuService(ReportService reportService, Scanner scanner, DisplayService displayService) {
         super(scanner);
         this.reportService = reportService;
+        this.displayService = displayService;
 
         this.dailyReportMenuService = new DailyReportMenuService(reportService, scanner);
-        this.projectReportMenuService = new ProjectReportMenuService(reportService, scanner);
+        this.projectReportMenuService = new ProjectReportMenuService(reportService, scanner, displayService);
         this.periodReportMenuService = new PeriodReportMenuService(reportService, scanner);
     }
 

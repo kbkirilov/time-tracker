@@ -32,7 +32,7 @@ public class MainMenuService extends MenuBase {
         this.timeEstimatesMenuService = timeEstimatesMenuService;
 
         this.timeLogMenuService = new TimeLogMenuService(logService, reportService, inputService, scanner, displayService);
-        this.reportMenuService = new ReportMenuService(reportService, scanner);
+        this.reportMenuService = new ReportMenuService(reportService, scanner, displayService);
     }
 
     /**

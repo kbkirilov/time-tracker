@@ -1,5 +1,6 @@
 package service;
 
+import record.ProjectAnalysis;
 import record.TimeEntry;
 import record.TimeEstimate;
 
@@ -27,6 +28,22 @@ public class ReportService {
     public void getWorkedHoursPerProject(String projectName) {
         Map<String, Double> result = db.getWorkedHoursPerProject(projectName);
         displayService.printThreeColumnTableWithContent(PROJECT_NAME_HEADER, TOTAL_HOURS, TOTAL_DAYS, result);
+    }
+
+    public void getDetailedReportByProjectName(String projectName) {
+        ProjectAnalysis analysis = db.getProjectAnalysis(projectName);
+        displayService.displayProjectAnalysis(projectName, analysis);
+    }
+
+    public void getHoursComparisonByProjectName(String projectName) {
+        ProjectAnalysis analysis = db.getProjectAnalysis(projectName);
+        displayService.displayProjectComparisonAnalysis(projectName, analysis);
+    }
+
+    // TODO to be implemented
+    public void getLastFiveProjectComparison() {
+        Map<String, ProjectAnalysis> map = new TreeMap<>();
+
     }
 
     public void getWorkedHoursForParticularDay(LocalDate date) {

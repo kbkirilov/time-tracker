@@ -1,5 +1,6 @@
 package service;
 
+import record.ProjectAnalysis;
 import record.TimeEntry;
 import record.TimeEstimate;
 
@@ -184,5 +185,108 @@ public class DisplayService {
     private double calculateRoundedHours(TimeEntry entry) {
         double hours = Duration.between(entry.start(), entry.end()).toMinutes() / 60.0;
         return (double) Math.round(hours * 1000.0) / 1000;
+    }
+
+    public void displayProjectAnalysis(String projectName, ProjectAnalysis analysis) {
+        if (analysis == null) {
+            System.out.println("Cannot analyze project '" + projectName + "' - no estimates found.");
+            return;
+        }
+
+        System.out.println("\n" + "=".repeat(60));
+        System.out.println("PROJECT ANALYSIS: " + analysis.projectName().toUpperCase());
+        System.out.println("=".repeat(60));
+
+        System.out.printf("%-15s | %-10s | %-10s | %-10s | %-10s%n",
+                "STAGE", "ACTUAL", "ESTIMATED", "VARIANCE", "% VARIANCE");
+        System.out.println("-".repeat(60));
+
+        // CD1 Analysis
+        System.out.printf("%-15s | %8.1fh | %8.1fh | %8.1fh | %8.1f%%%n",
+                "CD1 (Draft 1)",
+                analysis.actualCD1Hours(),
+                analysis.estimatedCD1Hours(),
+                analysis.getCD1Variance(),
+                analysis.getCD1PercentageVariance());
+
+        // CD2 Analysis
+        System.out.printf("%-15s | %8.1fh | %8.1fh | %8.1fh | %8.1f%%%n",
+                "CD2 (Draft 2)",
+                analysis.actualCD2Hours(),
+                analysis.estimatedCD2Hours(),
+                analysis.getCD2Variance(),
+                analysis.getCD2PercentageVariance());
+
+        // PF Analysis
+        System.out.printf("%-15s | %8.1fh | %8.1fh | %8.1fh | %8.1f%%%n",
+                "PF (Final)",
+                analysis.actualPFHours(),
+                analysis.estimatedPFHours(),
+                analysis.getPFVariance(),
+                analysis.getPFPercentageVariance());
+
+        System.out.println("-".repeat(60));
+
+        // Total Analysis
+        System.out.printf("%-15s | %8.1fh | %8.1fh | %8.1fh | %8.1f%%%n",
+                "TOTAL",
+                analysis.getTotalActualHours(),
+                analysis.getTotalEstimatedHours(),
+                analysis.getTotalVariance(),
+                analysis.getTotalEstimatedHours() > 0 ?
+                        (analysis.getTotalVariance() / analysis.getTotalEstimatedHours()) * 100 : 0);
+
+        System.out.println("=".repeat(60));
+
+        // Summary insights
+        if (analysis.getTotalVariance() > 0) {
+            System.out.println("⚠️  PROJECT OVER BUDGET by " + String.format("%.1f", analysis.getTotalVariance()) + " hours");
+        } else if (analysis.getTotalVariance() < 0) {
+            System.out.println("✅ PROJECT UNDER BUDGET by " + String.format("%.1f", Math.abs(analysis.getTotalVariance())) + " hours");
+        } else {
+            System.out.println("✅ PROJECT ON BUDGET");
+        }
+
+        // Stage-specific insights
+        String[] stages = {"CD1", "CD2", "PF"};
+        double[] variances = {analysis.getCD1Variance(), analysis.getCD2Variance(), analysis.getPFVariance()};
+
+        for (int i = 0; i < stages.length; i++) {
+            if (variances[i] > 2) { // More than 2 hours over
+                System.out.println("⚠️  " + stages[i] + " stage significantly over estimate");
+            }
+        }
+    }
+
+    public void displayProjectComparisonAnalysis(String projectName, ProjectAnalysis analysis) {
+        if (analysis == null) {
+            System.out.println("Cannot analyze project '" + projectName + "' - no estimates found.");
+            return;
+        }
+
+        System.out.printf("Total hours ENTRIES so far: %.2f%n", analysis.getTotalActualHours());
+        System.out.printf("Total hours ESTIMATE: %.2f%n", analysis.getTotalEstimatedHours());
+
+        printLoadingBar(analysis.getTotalActualHours(), analysis.getTotalEstimatedHours());
+    }
+
+    public static void printLoadingBar(double actualHours, double totalHours) {
+        if (totalHours <= 0) return;
+
+        double percentage = (actualHours / totalHours) * 100;
+        int filledLength = Math.min((int) (50 * percentage / 100), 50);
+
+        String filled = "█".repeat(filledLength);
+        String empty = "░".repeat(50 - filledLength);
+
+        // Show different indicators based on progress
+        if (percentage > 100) {
+            System.out.printf("0%% [%s%s] 100%% - OVER BUDGET!\n", filled, empty);
+            System.out.printf("Progress: %.1f/%.1f hours (%.1f%% - %.1f hours over)\n",
+                    actualHours, totalHours, percentage, actualHours - totalHours);
+        } else {
+            System.out.printf("0%% [%s%s] 100%%\n", filled, empty);
+            System.out.printf("Progress: %.1f/%.1f hours (%.1f%%)\n", actualHours, totalHours, percentage);
+        }
     }
 }

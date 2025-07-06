@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import record.ProjectAnalysis;
 import record.TimeEntry;
 import record.TimeEstimate;
 
@@ -42,10 +43,10 @@ public class DatabaseService {
 
     private int getDatabaseVersion() {
         String createVersionTableSql = """
-        CREATE TABLE IF NOT EXISTS schema_versions (
-            version INTEGER NOT NULL
-        );
-        """;
+                CREATE TABLE IF NOT EXISTS schema_versions (
+                    version INTEGER NOT NULL
+                );
+                """;
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement()) {
@@ -72,9 +73,9 @@ public class DatabaseService {
 
     private void migrateToVersion2() {
         String alterTableSql = """
-        ALTER TABLE time_entries
-        ADD COLUMN project_stages TEXT DEFAULT 'CD1';
-        """;
+                ALTER TABLE time_entries
+                ADD COLUMN project_stages TEXT DEFAULT 'CD1';
+                """;
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement()) {
@@ -183,7 +184,7 @@ public class DatabaseService {
                 """;
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             conn.setAutoCommit(true);
             pstmt.setString(1, entry.projectName());
             pstmt.setDouble(2, entry.cd1EstimateHours());
@@ -559,14 +560,14 @@ public class DatabaseService {
 
     public void updateTimeEntryById(int id, TimeEntry entry, double roundedHours) {
         String sql = """
-            UPDATE time_entries
-            SET project_name = ?,
-                entry_date = ?,
-                start_time = ?,
-                end_time = ?,
-                worked_hours = ?
-            WHERE id = ?
-            """;
+                UPDATE time_entries
+                SET project_name = ?,
+                    entry_date = ?,
+                    start_time = ?,
+                    end_time = ?,
+                    worked_hours = ?
+                WHERE id = ?
+                """;
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -587,14 +588,14 @@ public class DatabaseService {
 
     public void updateTimeEstimateById(int id, TimeEstimate entry, double totalHours) {
         String sql = """
-            UPDATE time_estimates
-            SET project_name = ?,
-                cd1_estimate_hours = ?,
-                cd2_estimate_hours = ?,
-                pf_estimate_hours = ?,
-                total_estimate_hours = ?
-            WHERE id = ?
-            """;
+                UPDATE time_estimates
+                SET project_name = ?,
+                    cd1_estimate_hours = ?,
+                    cd2_estimate_hours = ?,
+                    pf_estimate_hours = ?,
+                    total_estimate_hours = ?
+                WHERE id = ?
+                """;
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -660,5 +661,97 @@ public class DatabaseService {
         }
 
         return lastEntryEndTime;
+    }
+
+    public Map<String, Double> getActualHoursByProjectStage(String projectName) {
+        Map<String, Double> result = new HashMap<>();
+
+        String sql = """
+                SELECT project_stages, SUM(worked_hours) as total_hours
+                FROM time_entries
+                WHERE project_name = ?
+                GROUP BY project_stages
+                """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
+            pstmt.setString(1, projectName);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String stage = rs.getString("project_stages");
+                    double hours = rs.getDouble("total_hours");
+                    result.put(stage, hours);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Query error: " + e.getMessage());
+        }
+
+        return result;
+    }
+
+    /**
+     * Get estimated hours for a specific project
+     *
+     * @param projectName the project name
+     * @return TimeEstimate object with all estimate data, or null if not found
+     */
+    public TimeEstimate getTimeEstimateByProjectName(String projectName) {
+        String sql = """
+                SELECT *
+                FROM time_estimates
+                WHERE project_name = ?
+                ORDER BY created_at DESC
+                LIMIT 1
+                """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
+            pstmt.setString(1, projectName);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new TimeEstimate(
+                            rs.getString("project_name"),
+                            rs.getDouble("cd1_estimate_hours"),
+                            rs.getDouble("cd2_estimate_hours"),
+                            rs.getDouble("pf_estimate_hours")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Query error: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * Compare actual vs estimated hours for a project
+     *
+     * @param projectName the project name to analyze
+     * @return ProjectAnalysis object with comparison data
+     */
+    public ProjectAnalysis getProjectAnalysis(String projectName) {
+        Map<String, Double> actualHours = getActualHoursByProjectStage(projectName);
+        TimeEstimate estimates = getTimeEstimateByProjectName(projectName);
+
+        if (estimates == null) {
+            System.out.println("No estimates found for project: " + projectName);
+            return null;
+        }
+
+        return new ProjectAnalysis(
+                projectName,
+                actualHours.getOrDefault("CD1", 0.0),
+                actualHours.getOrDefault("CD2", 0.0),
+                actualHours.getOrDefault("PF", 0.0),
+                estimates.cd1EstimateHours(),
+                estimates.cd2EstimateHours(),
+                estimates.pfEstimateHours()
+        );
     }
 }

@@ -59,10 +59,10 @@ public class InputService {
     }
 
     public TimeEstimate getTimeEstimateInput() {
-        System.out.println("Enter project name: ");
+        System.out.print("Enter project name: ");
         String projectName = scanner.nextLine().trim();
         while (projectName.isEmpty()) {
-            System.out.println("Project name cannot be empty. Please try again: ");
+            System.out.print("Project name cannot be empty. Please try again: ");
             projectName = scanner.nextLine().trim();
         }
 
