@@ -8,9 +8,8 @@ import service.ReportService;
 
 import java.util.Scanner;
 
-import static utils.Constants.INVALID_CHOICE_MESSAGE;
-import static utils.Constants.SUCCESSFUL_TIME_LOG;
 import static utils.ConfirmationDialogUtil.*;
+import static utils.Constants.*;
 
 /**
  * Menu service for time tracking operations including
@@ -60,7 +59,7 @@ public class TimeLogMenuService extends MenuBase {
      * Handles the process of inserting a new time entry.
      */
     private void insertTimeEntry() {
-        reportService.printLastFiveUniqueProjectNames();
+        reportService.printLastXProjectNames(FIVE);
         displayMenuHeader("LOG NEW TIME ENTRY");
         TimeEntry entry = inputService.getTimeEntryInput();
         logService.logInsertTimeEntry(entry);

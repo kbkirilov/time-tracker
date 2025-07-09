@@ -18,6 +18,7 @@ public class Constants {
     public static final int DELIMITER_COUNT_65 = 65;
     public static final int DELIMITER_COUNT_70 = 70;
     public static final int DELIMITER_COUNT_80 = 80;
+    public static final int FIVE = 5;
 
     public static final String EMOJI_SPARKLES = "✨";
 

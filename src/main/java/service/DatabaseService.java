@@ -312,27 +312,6 @@ public class DatabaseService {
         return result;
     }
 
-    public double getWorkedHoursForParticularDay(LocalDate date) {
-        String sql = """
-                SELECT SUM(worked_hours) as total_hours
-                FROM time_entries
-                WHERE entry_date = ?
-                """;
-        double hours = 0;
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            conn.setAutoCommit(true);
-            pstmt.setString(1, date.toString());
-            ResultSet rs = pstmt.executeQuery();
-
-            hours = rs.getDouble("total_hours");
-        } catch (SQLException e) {
-            System.err.println("Query error: " + e.getMessage());
-        }
-
-        return hours;
-    }
-
     public Map<LocalDate, Map<String, Double>> getWeeklyProjectReport(LocalDate start, LocalDate end) {
         Map<LocalDate, Map<String, Double>> weeklyData = new TreeMap<>();
 
@@ -368,23 +347,25 @@ public class DatabaseService {
         return weeklyData;
     }
 
-    public List<String> getLastFiveUniqueProjectNames() {
+    public List<String> getLastXProjectNames(int projectCount) {
         List<String> result = new ArrayList<>();
 
         String sql = """
                 SELECT DISTINCT project_name
                 FROM time_entries
                 ORDER BY created_at DESC
-                LIMIT 5
+                LIMIT ?
                 """;
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             conn.setAutoCommit(true);
+            pstmt.setString(1, String.valueOf(projectCount));
 
-            while (rs.next()) {
-                result.add(rs.getString(1));
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    result.add(rs.getString(1));
+                }
             }
         } catch (SQLException e) {
             System.out.println("Query error: " + e.getMessage());
@@ -758,7 +739,7 @@ public class DatabaseService {
     public TreeMap<String, ProjectAnalysis> getLastFiveProjectComparison() {
         TreeMap<String, ProjectAnalysis> result = new TreeMap<>();
 
-        List<String> last5UniqueProjectNames = getLastFiveUniqueProjectNames();
+        List<String> last5UniqueProjectNames = getLastXProjectNames();
 
         for (int i = 0; i < last5UniqueProjectNames.size(); i++) {
             String currProjectName = last5UniqueProjectNames.get(i);

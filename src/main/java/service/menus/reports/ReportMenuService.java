@@ -14,15 +14,13 @@ public class ReportMenuService extends MenuBase {
     private final DailyReportMenuService dailyReportMenuService;
     private final ProjectReportMenuService projectReportMenuService;
     private final PeriodReportMenuService periodReportMenuService;
-    private final DisplayService displayService;
 
     public ReportMenuService(ReportService reportService, Scanner scanner, DisplayService displayService) {
         super(scanner);
         this.reportService = reportService;
-        this.displayService = displayService;
 
         this.dailyReportMenuService = new DailyReportMenuService(reportService, scanner);
-        this.projectReportMenuService = new ProjectReportMenuService(reportService, scanner, displayService);
+        this.projectReportMenuService = new ProjectReportMenuService(reportService, scanner);
         this.periodReportMenuService = new PeriodReportMenuService(reportService, scanner);
     }
 

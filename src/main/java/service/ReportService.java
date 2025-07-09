@@ -4,7 +4,6 @@ import record.ProjectAnalysis;
 import record.TimeEntry;
 import record.TimeEstimate;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -40,25 +39,9 @@ public class ReportService {
         displayService.displayProjectComparisonAnalysis(projectName, analysis);
     }
 
-    public void getLastFiveProjectComparison() {
+    public void getLastFiveProjectProgress() {
         TreeMap<String, ProjectAnalysis> map = db.getLastFiveProjectComparison();
         displayService.displayProjectComparisonAnalysis(map);
-    }
-
-    public void getWorkedHoursForParticularDay(LocalDate date) {
-        double hours = db.getWorkedHoursForParticularDay(date);
-        displayService.printTwoColumnHeaders(date.toString(), formatHoursToHHMM(hours));
-    }
-
-
-    public void reportWeeklyProjectHours() {
-        LocalDate start = LocalDate.now().with(DayOfWeek.MONDAY);
-        LocalDate end = LocalDate.now().with(DayOfWeek.SUNDAY);
-
-        Map<String, Double> result = db.getWeeklyWorkedHoursPerProject(start, end);
-
-        displayService.printTableHeader(TIME_PERIOD_HEADER, start.toString(), end.toString());
-        displayService.printTwoColumnsTableWithContent(PROJECT_NAME_HEADER, HOURS_HEADER, result);
     }
 
     /**
@@ -120,8 +103,8 @@ public class ReportService {
         }
     }
 
-    public void printLastFiveUniqueProjectNames() {
-        List<String> list = db.getLastFiveUniqueProjectNames();
+    public void printLastXProjectNames(int projectCount) {
+        List<String> list = db.getLastXProjectNames(projectCount);
         displayService.printLastFiveUniqueProjectNames(list);
     }
 
