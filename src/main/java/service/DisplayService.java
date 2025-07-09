@@ -109,6 +109,11 @@ public class DisplayService {
         System.out.println("=".repeat(DELIMITER_COUNT_65));
     }
 
+    public void printSubHeader(String header, int delimiter) {
+        System.out.printf("%s%n",header);
+        System.out.println("-".repeat(delimiter));
+    }
+
     public void printDateAndDayOfWeek(LocalDate date) {
         System.out.println("\n" + formatDateWithDayOfWeek(date.toString()));
     }
@@ -193,16 +198,16 @@ public class DisplayService {
             return;
         }
 
-        System.out.println("\n" + "=".repeat(60));
-        System.out.println("PROJECT ANALYSIS: " + analysis.projectName().toUpperCase());
-        System.out.println("=".repeat(60));
+        System.out.println("\n" + "=".repeat(DELIMITER_COUNT_70));
+        System.out.println("DETAILED ANALYSIS: " + analysis.projectName().toUpperCase());
+        System.out.println("=".repeat(DELIMITER_COUNT_70));
 
-        System.out.printf("%-15s | %-10s | %-10s | %-10s | %-10s%n",
-                "STAGE", "ACTUAL", "ESTIMATED", "VARIANCE", "% VARIANCE");
-        System.out.println("-".repeat(60));
+        System.out.printf(FIVE_COLUMN_TABLE_HEADER,
+                "STAGE", "ACTUAL", "ESTIMATED", "VARIANCE(H)", "VARIANCE(%)");
+        System.out.println("-".repeat(DELIMITER_COUNT_70));
 
         // CD1 Analysis
-        System.out.printf("%-15s | %8.1fh | %8.1fh | %8.1fh | %8.1f%%%n",
+        System.out.printf(FIVE_COLUMN_TABLE_ROW,
                 "CD1 (Draft 1)",
                 analysis.actualCD1Hours(),
                 analysis.estimatedCD1Hours(),
@@ -210,7 +215,7 @@ public class DisplayService {
                 analysis.getCD1PercentageVariance());
 
         // CD2 Analysis
-        System.out.printf("%-15s | %8.1fh | %8.1fh | %8.1fh | %8.1f%%%n",
+        System.out.printf(FIVE_COLUMN_TABLE_ROW,
                 "CD2 (Draft 2)",
                 analysis.actualCD2Hours(),
                 analysis.estimatedCD2Hours(),
@@ -218,17 +223,17 @@ public class DisplayService {
                 analysis.getCD2PercentageVariance());
 
         // PF Analysis
-        System.out.printf("%-15s | %8.1fh | %8.1fh | %8.1fh | %8.1f%%%n",
+        System.out.printf(FIVE_COLUMN_TABLE_ROW,
                 "PF (Final)",
                 analysis.actualPFHours(),
                 analysis.estimatedPFHours(),
                 analysis.getPFVariance(),
                 analysis.getPFPercentageVariance());
 
-        System.out.println("-".repeat(60));
+        System.out.println("-".repeat(DELIMITER_COUNT_70));
 
         // Total Analysis
-        System.out.printf("%-15s | %8.1fh | %8.1fh | %8.1fh | %8.1f%%%n",
+        System.out.printf(FIVE_COLUMN_TABLE_ROW,
                 "TOTAL",
                 analysis.getTotalActualHours(),
                 analysis.getTotalEstimatedHours(),
@@ -236,13 +241,14 @@ public class DisplayService {
                 analysis.getTotalEstimatedHours() > 0 ?
                         (analysis.getTotalVariance() / analysis.getTotalEstimatedHours()) * 100 : 0);
 
-        System.out.println("=".repeat(60));
+        System.out.println("=".repeat(DELIMITER_COUNT_70));
 
         // Summary insights
+        printSubHeader("INSIGHTS: ", DELIMITER_COUNT_70);
         if (analysis.getTotalVariance() > 0) {
-            System.out.println("⚠️  PROJECT OVER BUDGET by " + String.format("%.1f", analysis.getTotalVariance()) + " hours");
+            System.out.println("✨️  There are " + String.format("[%.1fh]", analysis.getTotalVariance()) + " more left till the estimate is reached");
         } else if (analysis.getTotalVariance() < 0) {
-            System.out.println("✅ PROJECT UNDER BUDGET by " + String.format("%.1f", Math.abs(analysis.getTotalVariance())) + " hours");
+            System.out.println("⚠️ PROJECT OVER BUDGET by " + String.format("%.1f", Math.abs(analysis.getTotalVariance())) + " hours");
         } else {
             System.out.println("✅ PROJECT ON BUDGET");
         }
@@ -252,10 +258,20 @@ public class DisplayService {
         double[] variances = {analysis.getCD1Variance(), analysis.getCD2Variance(), analysis.getPFVariance()};
 
         for (int i = 0; i < stages.length; i++) {
-            if (variances[i] > 2) { // More than 2 hours over
-                System.out.println("⚠️  " + stages[i] + " stage significantly over estimate");
+            double currVariance = variances[i];
+            String currStage = stages[i];
+
+            if (variances[i] > 0) { // If there are more ours left of the estimate
+                System.out.println("✨️  There are " + String.format("[%.1fh]", currVariance) + " in total left till the " + currStage + " is reached.");
+            } else if (variances[i] < 0) {
+                System.out.println("⚠️  " + currStage + " stage is over estimate  by " + String.format("[%.1fh]", currVariance) + " hours.");
+            } else {
+                System.out.println("✅  " + currStage + " is on budget");
             }
         }
+
+        printSubHeader("PROGRESS BAR: ", DELIMITER_COUNT_70);
+        printProgressBar(analysis.getTotalActualHours(), analysis.getTotalEstimatedHours());
     }
 
     public void displayProjectComparisonAnalysis(String projectName, ProjectAnalysis analysis) {
@@ -267,10 +283,16 @@ public class DisplayService {
         System.out.printf("Total hours ENTRIES so far: %.2f%n", analysis.getTotalActualHours());
         System.out.printf("Total hours ESTIMATE: %.2f%n", analysis.getTotalEstimatedHours());
 
-        printLoadingBar(analysis.getTotalActualHours(), analysis.getTotalEstimatedHours());
+        printProgressBar(analysis.getTotalActualHours(), analysis.getTotalEstimatedHours());
     }
 
-    public static void printLoadingBar(double actualHours, double totalHours) {
+    public void displayProjectComparisonAnalysis(TreeMap<String, ProjectAnalysis> map) {
+        for (Map.Entry<String, ProjectAnalysis> entry : map.entrySet()) {
+            displayProjectComparisonAnalysis(entry.getKey(), entry.getValue());
+        }
+    }
+
+    public static void printProgressBar(double actualHours, double totalHours) {
         if (totalHours <= 0) return;
 
         double percentage = (actualHours / totalHours) * 100;

@@ -40,10 +40,9 @@ public class ReportService {
         displayService.displayProjectComparisonAnalysis(projectName, analysis);
     }
 
-    // TODO to be implemented
     public void getLastFiveProjectComparison() {
-        Map<String, ProjectAnalysis> map = new TreeMap<>();
-
+        TreeMap<String, ProjectAnalysis> map = db.getLastFiveProjectComparison();
+        displayService.displayProjectComparisonAnalysis(map);
     }
 
     public void getWorkedHoursForParticularDay(LocalDate date) {

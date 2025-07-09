@@ -754,4 +754,19 @@ public class DatabaseService {
                 estimates.pfEstimateHours()
         );
     }
+
+    public TreeMap<String, ProjectAnalysis> getLastFiveProjectComparison() {
+        TreeMap<String, ProjectAnalysis> result = new TreeMap<>();
+
+        List<String> last5UniqueProjectNames = getLastFiveUniqueProjectNames();
+
+        for (int i = 0; i < last5UniqueProjectNames.size(); i++) {
+            String currProjectName = last5UniqueProjectNames.get(i);
+            ProjectAnalysis currProjectAnalysis = getProjectAnalysis(currProjectName);
+
+            result.put(currProjectName, currProjectAnalysis);
+        }
+
+        return result;
+    }
 }

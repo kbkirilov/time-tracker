@@ -14,9 +14,15 @@ public class Constants {
     public static final String DATE = "DATE";
     public static final int HEADER_STRING_MAX_LENGTH = 50;
 
-    public static final int DELIMITER_COUNT_80 = 80;
-    public static final int DELIMITER_COUNT_65 = 65;
     public static final int HOURS_IN_WORKING_DAY = 8;
+    public static final int DELIMITER_COUNT_65 = 65;
+    public static final int DELIMITER_COUNT_70 = 70;
+    public static final int DELIMITER_COUNT_80 = 80;
+
+    public static final String EMOJI_SPARKLES = "✨";
+
+    public static final String FIVE_COLUMN_TABLE_ROW = "%-15s | %9.1fh | %9.1fh | %9.1fh | %9.1f%%%n";
+    public static final String FIVE_COLUMN_TABLE_HEADER = "%-15s | %10s | %10s | %10s | %10s%n";
 
     public static final String DB_URL = "jdbc:sqlite:E:/Programming/TimeTracker/timelog.db";
 

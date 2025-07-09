@@ -30,6 +30,7 @@ public class ProjectReportMenuService extends MenuBase {
                     "View detailed report by project name",
                     "View hours by project's name",
                     "View hours comparison by project's name",
+                    "View hours comparison on last 5 projects",
                     "Back to reports menu");
 
             int choice = getChoice();
