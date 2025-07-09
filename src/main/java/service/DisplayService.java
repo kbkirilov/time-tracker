@@ -5,11 +5,11 @@ import record.TimeEntry;
 import record.TimeEstimate;
 
 import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.*;
 
+import static utils.Calculations.calculateRoundedHours;
 import static utils.Constants.*;
 import static utils.Constants.DELIMITER_COUNT_80;
 import static utils.TimeFormatter.*;
@@ -185,11 +185,6 @@ public class DisplayService {
 
         DayOfWeek dayOfWeek = date.getDayOfWeek();
         return String.format("%s / %s", dateStr, dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault()));
-    }
-
-    private double calculateRoundedHours(TimeEntry entry) {
-        double hours = Duration.between(entry.start(), entry.end()).toMinutes() / 60.0;
-        return (double) Math.round(hours * 1000.0) / 1000;
     }
 
     public void displayProjectAnalysis(String projectName, ProjectAnalysis analysis) {

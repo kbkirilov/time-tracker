@@ -4,7 +4,7 @@
   This will make accessing the right Time Entry much easier, without the need of going to the db table and checking
   the entry's id.<br>
 
-#2 - <u>__Time Budget Per Project__</u> - Create a new database table 'time_budgets' where I will enter the time given to me
+- [x] #2 - <u>__Time Budget Per Project__</u> - Create a new database table 'time_budgets' where I will enter the time given to me
 by RS for each project. This can be used to check how much time left I have on a project. It could be used for notifications
 in case I can put in more time for a project.<br>
 
@@ -30,6 +30,9 @@ I want to show the total hours per Time Entry on this confirmation step. Like th
 
 - [ ] #6 <u>__Make 'Enter end time' default value equals the current time__</u> -> When you enter a new time entry the end time is usually what
   the current time is. So a default value for the current time would be very handy.
+
+- [ ] #7 <u>__Allow entering 'cd1' on time entry project's stage __</u> -> Be able to just put it 'cd1' or 'pf' and automatically convert to uppercase. This
+way I won't have to switch to Caps Lock every time.
 
 ## Fixes suggestions
 

@@ -1,5 +1,9 @@
 package utils;
 
+import record.TimeEntry;
+
+import java.time.Duration;
+
 import static utils.Constants.HOURS_IN_WORKING_DAY;
 
 public class TimeFormatter {

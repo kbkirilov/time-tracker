@@ -52,8 +52,7 @@ public class ConfirmationDialogUtil {
         return showConfirmation(confirmMessage, scanner);
     }
 
-    // TODO write a documentation for this method
-    public static boolean showEditConfirmation(TimeEntry current, TimeEntry updated, Scanner scanner) {
+    public static boolean showTimeEntryEditConfirmation(TimeEntry current, TimeEntry updated, Scanner scanner) {
         System.out.println("\n--- CONFIRM CHANGES ---");
         System.out.println("Original: " + current.toString());
         System.out.println("Updated: " + updated.toString());
@@ -63,8 +62,7 @@ public class ConfirmationDialogUtil {
         return confirmation.equals("y") || confirmation.equals("yes");
     }
 
-    // TODO write a documentation for this method
-    public static boolean showEditConfirmation(TimeEstimate current, TimeEstimate updated, Scanner scanner) {
+    public static boolean showTimeEstimateEditConfirmation(TimeEstimate current, TimeEstimate updated, Scanner scanner) {
         System.out.println("\n--- CONFIRM CHANGES ---");
         System.out.println("Original: " + current.toString());
         System.out.println("Updated: " + updated.toString());

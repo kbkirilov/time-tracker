@@ -1,6 +1,5 @@
 package service.menus;
 
-import record.TimeEntry;
 import record.TimeEstimate;
 import service.DisplayService;
 import service.InputService;
@@ -80,7 +79,7 @@ public class TimeEstimatesMenuService extends MenuBase {
 
             TimeEstimate updatedEntry = inputService.getTimeEstimateEditInput(currentEntry);
 
-            if (showEditConfirmation(currentEntry, updatedEntry, scanner)) {
+            if (showTimeEstimateEditConfirmation(currentEntry, updatedEntry, scanner)) {
                 logService.logUpdatedTimeEstimate(id, updatedEntry);
                 System.out.println("Entry updated successfully.");
             } else {

@@ -118,7 +118,7 @@ public class TimeLogMenuService extends MenuBase {
 
             TimeEntry updatedEntry = inputService.getTimeEntryEditInput(currentEntry);
 
-            if (showEditConfirmation(currentEntry, updatedEntry, scanner)) {
+            if (showTimeEntryEditConfirmation(currentEntry, updatedEntry, scanner)) {
                 logService.logUpdateTimeEntry(id, updatedEntry);
                 System.out.println("Entry updated successfully.");
             } else {

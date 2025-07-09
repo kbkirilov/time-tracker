@@ -5,6 +5,8 @@ import record.TimeEstimate;
 
 import java.time.Duration;
 
+import static utils.Calculations.calculateRoundedHours;
+
 
 public class LogService {
     private final DatabaseService db;
@@ -56,10 +58,5 @@ public class LogService {
         db.updateTimeEstimateById(id, entry, totalHours);
     }
 
-    // TODO This method appears in more than one places. Introduce it in a helper class or something.
-    private double calculateRoundedHours(TimeEntry entry) {
-        double hours = Duration.between(entry.start(), entry.end()).toMinutes() / 60.0;
-        return (double) Math.round(hours * 1000.0) / 1000;
-    }
 }
 
