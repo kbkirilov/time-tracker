@@ -32,6 +32,8 @@ bin/
 timelog.db
 BACKLOG.md
 *.class
+*.bin
+*.uniqueld0
 /build/
 
 #### Gradle ####

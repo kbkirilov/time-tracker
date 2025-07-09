@@ -739,7 +739,7 @@ public class DatabaseService {
     public TreeMap<String, ProjectAnalysis> getLastFiveProjectComparison() {
         TreeMap<String, ProjectAnalysis> result = new TreeMap<>();
 
-        List<String> last5UniqueProjectNames = getLastXProjectNames();
+        List<String> last5UniqueProjectNames = getLastXProjectNames(FIVE);
 
         for (int i = 0; i < last5UniqueProjectNames.size(); i++) {
             String currProjectName = last5UniqueProjectNames.get(i);
