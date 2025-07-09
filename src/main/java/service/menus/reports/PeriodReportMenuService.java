@@ -94,11 +94,14 @@ public class PeriodReportMenuService extends MenuBase {
 
     }
 
+    /**
+     * It creates a breakdown for each day, starting from the beginning of the month till the current day
+     */
     private void getCurrentMonthBreakdown() {
         displayMenuHeader("CURRENT MONTH BREAKDOWN");
         LocalDate now = LocalDate.now();
         LocalDate start = now.withDayOfMonth(1);
-        LocalDate end = now.withDayOfMonth(now.lengthOfMonth());
+        LocalDate end = LocalDate.now();
 
         reportService.getTimePeriodProjectBreakdown(start, end);
     }

@@ -115,14 +115,14 @@ public class DisplayService {
     }
 
     public void printDateAndDayOfWeek(LocalDate date) {
-        System.out.println("\n" + formatDateWithDayOfWeek(date.toString()));
+        System.out.println("\n\n" + formatDateWithDayOfWeek(date.toString()));
     }
 
     public void printTotalsPerProjectHeaders() {
-        System.out.println("\n" + "=".repeat(DELIMITER_COUNT_80));
+        System.out.println("\n" + "=".repeat(DELIMITER_COUNT_65));
         System.out.println("TOTALS PER PROJECT");
         printTwoColumnHeaders(PROJECT_NAME_HEADER, TOTAL_HOURS, HEADER_DELIMITER,
-                ROW_DELIMITER);
+                DASH_DELIMITER);
     }
 
     public void printLastFiveUniqueProjectNames(List<String> list) {

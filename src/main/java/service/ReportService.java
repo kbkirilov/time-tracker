@@ -61,17 +61,17 @@ public class ReportService {
             Map<String, Double> dayProjects = result.getOrDefault(current, Collections.emptyMap());
 
             displayService.printDateAndDayOfWeek(current);
-            displayService.printTwoColumnHeaders(PROJECT_NAME_HEADER, HOURS_HEADER, ROW_DELIMITER);
 
             if (dayProjects.isEmpty()) {
                 System.out.println("No hours recorded for this day");
             } else {
+                displayService.printTwoColumnHeaders(PROJECT_NAME_HEADER, HOURS_HEADER, DASH_DELIMITER_BOTTOM_ALIGNED, DASH_DELIMITER_TOP_ALIGNED);
                 for (Map.Entry<String, Double> entry : dayProjects.entrySet()) {
                     displayService.printRow(entry.getKey(), formatHoursToHHMM(entry.getValue()));
                 }
 
                 double dailyTotal = dayProjects.values().stream().mapToDouble(Double::doubleValue).sum();
-                displayService.printTwoColumnHeaders(DAILY_TOTAL, formatHoursToHHMM(dailyTotal), ROW_DELIMITER);
+                displayService.printTwoColumnHeaders(DAILY_TOTAL, formatHoursToHHMM(dailyTotal), DASH_DELIMITER);
             }
 
             current = current.plusDays(1);
@@ -99,7 +99,7 @@ public class ReportService {
 
             double grandTotal = projectTotals.values().stream().mapToDouble(Double::doubleValue).sum();
             displayService.printTwoColumnHeaders(GRAND_TOTAL, formatHoursToHHMM(grandTotal),
-                    ROW_DELIMITER, HEADER_DELIMITER);
+                    DASH_DELIMITER, HEADER_DELIMITER);
         }
     }
 

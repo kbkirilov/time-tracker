@@ -2,7 +2,9 @@ package utils;
 
 public class Constants {
     public static final String HEADER_DELIMITER = "=";
-    public static final String ROW_DELIMITER = "-";
+    public static final String DASH_DELIMITER = "-";
+    public static final String DASH_DELIMITER_TOP_ALIGNED = "ˉ";
+    public static final String DASH_DELIMITER_BOTTOM_ALIGNED = "ˍ";
 
     public static final String PROJECT_NAME_HEADER = "PROJECT NAME";
     public static final String HOURS_HEADER = "HOURS";
@@ -18,7 +20,7 @@ public class Constants {
     public static final int DELIMITER_COUNT_65 = 65;
     public static final int DELIMITER_COUNT_70 = 70;
     public static final int DELIMITER_COUNT_80 = 80;
-    public static final int FIVE = 5;
+    public static final int NUMBER_OF_PROJECTS = 5;
 
     public static final String EMOJI_SPARKLES = "✨";
 

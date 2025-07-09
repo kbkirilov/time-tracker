@@ -5,7 +5,7 @@ import service.menus.MenuBase;
 
 import java.util.Scanner;
 
-import static utils.Constants.FIVE;
+import static utils.Constants.NUMBER_OF_PROJECTS;
 import static utils.Constants.INVALID_CHOICE_MESSAGE;
 
 public class ProjectReportMenuService extends MenuBase {
@@ -54,7 +54,7 @@ public class ProjectReportMenuService extends MenuBase {
     }
 
     private void getHoursComparisonByProjectName() {
-        reportService.printLastXProjectNames(FIVE);
+        reportService.printLastXProjectNames(NUMBER_OF_PROJECTS);
         displayMenuHeader("HOURS COMPARISON REPORT");
         System.out.print("Enter project name: ");
         String projectName = scanner.nextLine();
@@ -68,7 +68,7 @@ public class ProjectReportMenuService extends MenuBase {
     }
 
     private void getDetailedReportByProjectName() {
-        reportService.printLastXProjectNames(FIVE);
+        reportService.printLastXProjectNames(NUMBER_OF_PROJECTS);
         displayMenuHeader("DETAILED PROJECT REPORT");
         System.out.print("Enter project name: ");
         String projectName = scanner.nextLine();
@@ -82,7 +82,7 @@ public class ProjectReportMenuService extends MenuBase {
     }
 
     private void getHoursByProjectName() {
-        reportService.printLastXProjectNames(FIVE);
+        reportService.printLastXProjectNames(NUMBER_OF_PROJECTS);
         displayMenuHeader("PROJECT HOURS");
         System.out.println("Enter project name: ");
         String projectName = scanner.nextLine();

@@ -37,6 +37,5 @@ way I won't have to switch to Caps Lock every time.
 ## Fixes suggestions
 
 <u>__Do not show a day in the reports if there are no working hours for it.__</u><br>
-<u>__Provide support for "тодаъ"__</u><br>
+~~<u>__Provide support for "тодаъ"__</u><br>~~
 <u>__If 'end_time' in a Time Entry finishes at 00:00 it makes it with a negative sign...__</u><br>
-<u>__If a put in '21:00' it gets overridden to '09:00' in a Time Entry...__</u><br>
