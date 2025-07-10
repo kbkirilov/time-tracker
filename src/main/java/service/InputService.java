@@ -20,7 +20,7 @@ public class InputService {
     }
 
     public TimeEntry getTimeEntryInput() {
-        System.out.printf("Enter project name or choose from the above, or hit ENTER for the last entry (%s): ",
+        System.out.printf("Enter project name or choose from the above, or hit ENTER for the last entry [%s]: ",
                 databaseService.getLastEntryProjectName());
         String projectName = scanner.nextLine().trim();
         if (projectName.isEmpty()) {
@@ -28,23 +28,16 @@ public class InputService {
         }
 
         System.out.print("Enter project stage (CD1, CD2, PF, NA): ");
-        String projectStage = scanner.nextLine().trim();
-        while (!projectStage.equals("CD1") &&
-                !projectStage.equals("CD2") &&
-                !projectStage.equals("PF") &&
-                !projectStage.equals("NA")) {
-            System.out.print("Invalid project stage. Enter a valid project stage: ");
-            projectStage = scanner.nextLine().trim();
-        }
+        String projectStage = getProjectStageValidation(scanner.nextLine().toUpperCase().trim());
 
-        System.out.print("Enter date (yyyy-MM-dd or hit ENTER for (today): ");
+        System.out.print("Enter date (YYYY-MM-dd) or hit ENTER for [today]: ");
         String dateInput = scanner.nextLine();
         if (dateInput.isEmpty()) {
             dateInput = "today";
         }
         LocalDate date = dateInput.equalsIgnoreCase("today") ? LocalDate.now() : LocalDate.parse(dateInput, dateFormatter);
 
-        System.out.printf("Enter start time (HH:mm) or hit ENTER for last task's end time (%s): ",
+        System.out.printf("Enter start time (HH:mm) or hit ENTER for last task's end time [%s]: ",
                 databaseService.getLastEntryEndTime());
         String startTime = scanner.nextLine();
         if (startTime.isEmpty()) {
@@ -52,10 +45,24 @@ public class InputService {
         }
         LocalTime start = LocalTime.parse(startTime, timeFormatter);
 
-        System.out.print("Enter end time (HH:mm): ");
-        LocalTime end = LocalTime.parse(scanner.nextLine(), timeFormatter);
+        System.out.printf("Enter end time (HH:mm) or hit ENTER for current's rounded time [%s]: ",
+                LocalTime.now().format(timeFormatter));
+        String endTime = scanner.nextLine();
+
+        LocalTime end;
+        if (endTime.isEmpty()) {
+            end = roundedCurrentTime();
+        } else {
+            end = LocalTime.parse(endTime, timeFormatter);
+        }
 
         return new TimeEntry(projectName, projectStage, date, start, end);
+    }
+
+    private LocalTime roundedCurrentTime() {
+        LocalTime now = LocalTime.now();
+        int rounded = ((now.getMinute() + 4) / 5) * 5;
+        return now.withMinute(0).plusMinutes(rounded).withSecond(0).withNano(0);
     }
 
     public TimeEstimate getTimeEstimateInput() {
@@ -73,22 +80,6 @@ public class InputService {
         return new TimeEstimate(projectName, cd1EstimateHours, cd2EstimateHours, pfEstimateHours);
     }
 
-    private double readDoubleWithPrompt(String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            String input = scanner.nextLine().trim();
-            if (input.isEmpty()) {
-                System.out.println("Input cannot be empty.");
-                continue;
-            }
-            try {
-                return Double.parseDouble(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid number. Please try again.");
-            }
-        }
-    }
-
     public TimeEntry getTimeEntryEditInput(TimeEntry currentEntry) {
         System.out.print("Project name [" + currentEntry.projectName() + "]: ");
         String projectName = scanner.nextLine().trim();
@@ -97,14 +88,7 @@ public class InputService {
         }
 
         System.out.println("Enter project stage (CD1, CD2, PF, NA): ");
-        String projectStage = scanner.nextLine().trim();
-        while (!projectStage.equals("CD1") &&
-                !projectStage.equals("CD2") &&
-                !projectStage.equals("PF") &&
-                !projectStage.equals("NA")) {
-            System.out.print("Invalid project stage. Enter a valid project stage: ");
-            projectStage = scanner.nextLine().trim();
-        }
+        String projectStage = getProjectStageValidation(scanner.nextLine().toUpperCase().trim());
 
         System.out.println("Date (yyyy-MM-dd or 'today') [" + currentEntry.date() + "]: ");
         String dateInput = scanner.nextLine().trim();
@@ -170,5 +154,32 @@ public class InputService {
         }
 
         return new TimeEstimate(projectName, cd1EstimateHours, cd2EstimateHours, pfEstimateHours);
+    }
+
+    private double readDoubleWithPrompt(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) {
+                System.out.println("Input cannot be empty.");
+                continue;
+            }
+            try {
+                return Double.parseDouble(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid number. Please try again.");
+            }
+        }
+    }
+
+    private String getProjectStageValidation(String projectStage) {
+        while (!projectStage.equals("CD1") &&
+                !projectStage.equals("CD2") &&
+                !projectStage.equals("PF") &&
+                !projectStage.equals("NA")) {
+            System.out.print("Invalid project stage. Enter a valid project stage (CD1, CD2, PF, NA): ");
+            projectStage = scanner.nextLine().toUpperCase().trim();
+        }
+        return projectStage;
     }
 }
