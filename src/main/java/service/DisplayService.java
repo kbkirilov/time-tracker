@@ -148,13 +148,15 @@ public class DisplayService {
                         "Entry date: %s%n " +
                         "Start time: %s%n " +
                         "End time: %s%n " +
-                        "Rounded Hours: %f %n",
+                        "Rounded Hours: %f %n" +
+                        "Time variance: %d%n",
                 entry.projectName(),
                 entry.projectStage(),
                 entry.date(),
                 entry.start(),
                 entry.end(),
-                roundedHours);
+                roundedHours,
+                entry.timeVariance());
     }
 
     public void displayTimeEstimateDetails(TimeEstimate entry) {

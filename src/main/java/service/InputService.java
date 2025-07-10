@@ -56,7 +56,16 @@ public class InputService {
             end = LocalTime.parse(endTime, timeFormatter);
         }
 
-        return new TimeEntry(projectName, projectStage, date, start, end);
+        System.out.print("Enter time variance (1, 2) or hit ENTER for default [1]: ");
+        String timeVarianceStr = scanner.nextLine().trim();
+        int timeVariance;
+        if (timeVarianceStr.isEmpty()) {
+            timeVariance = 1;
+        } else {
+            timeVariance = getTimeVarianceValidation(timeVarianceStr);
+        }
+
+        return new TimeEntry(projectName, projectStage, date, start, end, timeVariance);
     }
 
     private LocalTime roundedCurrentTime() {
@@ -101,21 +110,30 @@ public class InputService {
             }
         }
 
-        System.out.println("Start Time (HH:mm) [" + currentEntry.start() + "]:");
+        System.out.println("Start Time (HH:mm) [" + currentEntry.start() + "]: ");
         String startTimeInput = scanner.nextLine().trim();
         LocalTime startTime = currentEntry.start();
         if (!startTimeInput.isEmpty()) {
             startTime = LocalTime.parse(startTimeInput, timeFormatter);
         }
 
-        System.out.println("End Time (HH:mm) [" + currentEntry.end() + "]:");
+        System.out.println("End Time (HH:mm) [" + currentEntry.end() + "]: ");
         String endTimeInput = scanner.nextLine().trim();
         LocalTime endTime = currentEntry.end();
         if (!endTimeInput.isEmpty()) {
             endTime = LocalTime.parse(endTimeInput, timeFormatter);
         }
 
-        return new TimeEntry(projectName, projectStage, date, startTime, endTime);
+        System.out.println("Time Variance (1, 2) [" + currentEntry.timeVariance() + "]: ");
+        String timeVarianceStr = scanner.nextLine().trim();
+        int timeVariance;
+        if (timeVarianceStr.isEmpty()) {
+            timeVariance = 1;
+        } else {
+            timeVariance = getTimeVarianceValidation(timeVarianceStr);
+        }
+
+        return new TimeEntry(projectName, projectStage, date, startTime, endTime, timeVariance);
     }
 
     public TimeEstimate getTimeEstimateEditInput(TimeEstimate currentEntry) {
@@ -181,5 +199,14 @@ public class InputService {
             projectStage = scanner.nextLine().toUpperCase().trim();
         }
         return projectStage;
+    }
+
+    private int getTimeVarianceValidation(String timeVarianceStr) {
+        while (!timeVarianceStr.equals("1") &&
+                !timeVarianceStr.equals("2")) {
+            System.out.print("Invalid time variance value. Enter either 1 or 2: ");
+            timeVarianceStr = scanner.nextLine().trim();
+        }
+        return Integer.parseInt(timeVarianceStr);
     }
 }

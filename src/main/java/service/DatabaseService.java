@@ -14,7 +14,7 @@ import record.TimeEstimate;
 import static utils.Constants.*;
 
 public class DatabaseService {
-    private static final int CURRENT_SCHEMA_VERSION = 2;
+    private static final int SCHEMA_VERSION_TO_UPDATE_TO = 3;
 
     public DatabaseService() {
         createTimeEntriesIfNotExists();
@@ -25,18 +25,18 @@ public class DatabaseService {
     private void migrateDatabase() {
         int currentVersion = getDatabaseVersion();
 
-        if (currentVersion < CURRENT_SCHEMA_VERSION) {
-            System.out.println("Migrating database from version " + currentVersion + " to " + CURRENT_SCHEMA_VERSION);
+        if (currentVersion < SCHEMA_VERSION_TO_UPDATE_TO) {
+            System.out.println("Migrating database from version " + currentVersion + " to " + SCHEMA_VERSION_TO_UPDATE_TO);
 
-            // Apply migrations in order
             if (currentVersion < 2) {
                 migrateToVersion2();
             }
 
-            // Future migrations would go here
-            // if (currentVersion < 3) { migrateToVersion3(); }
+            if (currentVersion < 3) {
+                migrateToVersion3();
+            }
 
-            updateDatabaseVersion(CURRENT_SCHEMA_VERSION);
+            updateDatabaseVersion(SCHEMA_VERSION_TO_UPDATE_TO);
             System.out.println("Database migration completed successfully");
         }
     }
@@ -87,6 +87,26 @@ public class DatabaseService {
 
         } catch (SQLException e) {
             System.err.println("Error migrating to version 2: " + e.getMessage());
+            throw new RuntimeException("Database migration failed", e);
+        }
+    }
+
+    private void migrateToVersion3() {
+        String alterTableSql = """
+                ALTER TABLE time_entries
+                ADD COLUMN time_variance INT DEFAULT 1
+                """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement stmt = conn.createStatement()) {
+
+            conn.setAutoCommit(true);
+            stmt.execute(alterTableSql);
+
+            System.out.println("Added time_variance column to time_entries table");
+
+        } catch (SQLException e) {
+            System.err.println("Error migrating to version 3: " + e.getMessage());
             throw new RuntimeException("Database migration failed", e);
         }
     }
@@ -152,8 +172,8 @@ public class DatabaseService {
 
     public void createTimeEntry(TimeEntry entry, double hours) {
         String sql = """
-                    INSERT INTO time_entries(project_name, entry_date, start_time, end_time, worked_hours, created_at, project_stages)
-                                               VALUES (?, ?, ?, ?, ?, ?, ?);
+                    INSERT INTO time_entries(project_name, entry_date, start_time, end_time, worked_hours, created_at, project_stages, time_variance)
+                                               VALUES (?, ?, ?, ?, ?, ?, ?, ?);
                 """;
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -170,6 +190,7 @@ public class DatabaseService {
                     .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             pstmt.setString(6, timestamp);
             pstmt.setString(7, entry.projectStage());
+            pstmt.setInt(8, entry.timeVariance());
 
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -502,7 +523,8 @@ public class DatabaseService {
                             rs.getString("project_stages"),
                             LocalDate.parse(rs.getString("entry_date")),
                             LocalTime.parse(rs.getString("start_time")),
-                            LocalTime.parse(rs.getString("end_time"))
+                            LocalTime.parse(rs.getString("end_time")),
+                            rs.getInt("time_variance")
                     );
                 }
             }
@@ -546,7 +568,8 @@ public class DatabaseService {
                     entry_date = ?,
                     start_time = ?,
                     end_time = ?,
-                    worked_hours = ?
+                    worked_hours = ?,
+                    time_variance = ?
                 WHERE id = ?
                 """;
 
@@ -558,7 +581,8 @@ public class DatabaseService {
             pstmt.setString(3, entry.start().toString());
             pstmt.setString(4, entry.end().toString());
             pstmt.setDouble(5, roundedHours);
-            pstmt.setInt(6, id);
+            pstmt.setInt(6, entry.timeVariance());
+            pstmt.setInt(7, id);
 
             pstmt.executeUpdate();
 
