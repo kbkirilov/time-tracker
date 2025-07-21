@@ -189,7 +189,7 @@ public class DisplayService {
         return String.format("%s / %s", dateStr, dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault()));
     }
 
-    public void displayProjectAnalysis(String projectName, ProjectAnalysis analysis) {
+    public void displayDetailedProjectAnalysis(String projectName, ProjectAnalysis analysis) {
         if (analysis == null) {
             System.out.println("Cannot analyze project '" + projectName + "' - no estimates found.");
             return;
@@ -240,35 +240,36 @@ public class DisplayService {
 
         System.out.println("=".repeat(DELIMITER_COUNT_70));
 
-        // Summary insights
         printSubHeader("INSIGHTS: ", DELIMITER_COUNT_70);
-        if (analysis.getTotalVariance() > 0) {
-            System.out.println("✨️  There are " + String.format("[%.1fh]", analysis.getTotalVariance()) + " more left till the estimate is reached");
-        } else if (analysis.getTotalVariance() < 0) {
-            System.out.println("⚠️ PROJECT OVER BUDGET by " + String.format("%.1f", Math.abs(analysis.getTotalVariance())) + " hours");
-        } else {
-            System.out.println("✅ PROJECT ON BUDGET");
-        }
+        printInsights(analysis);
 
-        // Stage-specific insights
-        String[] stages = {"CD1", "CD2", "PF"};
-        double[] variances = {analysis.getCD1Variance(), analysis.getCD2Variance(), analysis.getPFVariance()};
+        printSubHeader("PROGRESS BAR VIEW: ", DELIMITER_COUNT_70);
+        printSubHeader("CD1 HOURS PROGRESS BAR: ", DELIMITER_COUNT_70);
+        printProgressBar(analysis.actualCD1Hours(), analysis.estimatedCD1Hours());
+        printSubHeader("CD2 HOURS PROGRESS BAR: ", DELIMITER_COUNT_70);
+        printProgressBar(analysis.actualCD2Hours(), analysis.estimatedCD2Hours());
+        printSubHeader("PF HOURS PROGRESS BAR: ", DELIMITER_COUNT_70);
+        printProgressBar(analysis.actualPFHours(), analysis.estimatedPFHours());
+        printSubHeader("TOTAL HOURS PROGRESS BAR: ", DELIMITER_COUNT_70);
+        printProgressBar(analysis.getTotalActualHours(), analysis.getTotalEstimatedHours());
+    }
+
+    private void printInsights(ProjectAnalysis analysis) {
+        String[] stages = {"CD1", "CD2", "PF", "TOTAL"};
+        double[] variances = {analysis.getCD1Variance(), analysis.getCD2Variance(), analysis.getPFVariance(), analysis.getTotalVariance()};
 
         for (int i = 0; i < stages.length; i++) {
             double currVariance = variances[i];
             String currStage = stages[i];
 
             if (variances[i] > 0) { // If there are more ours left of the estimate
-                System.out.println("✨️  There are " + String.format("[%.1fh]", currVariance) + " in total left till the " + currStage + " is reached.");
+                getRemainingHoursToEstimate(currVariance, currStage);
             } else if (variances[i] < 0) {
-                System.out.println("⚠️  " + currStage + " stage is over estimate  by " + String.format("[%.1fh]", currVariance) + " hours.");
+                System.out.println("⚠️  " + currStage + " stage is over estimate  by " + String.format("[%.1f] hours", currVariance) + " hours.");
             } else {
                 System.out.println("✅  " + currStage + " is on budget");
             }
         }
-
-        printSubHeader("PROGRESS BAR: ", DELIMITER_COUNT_70);
-        printProgressBar(analysis.getTotalActualHours(), analysis.getTotalEstimatedHours());
     }
 
     public void displayProjectComparisonAnalysis(String projectName, ProjectAnalysis analysis) {
@@ -289,10 +290,10 @@ public class DisplayService {
         }
     }
 
-    public static void printProgressBar(double actualHours, double totalHours) {
-        if (totalHours <= 0) return;
+    public static void printProgressBar(double actualHours, double estimateHours) {
+        if (estimateHours <= 0) return;
 
-        double percentage = (actualHours / totalHours) * 100;
+        double percentage = (actualHours / estimateHours) * 100;
         int filledLength = Math.min((int) (50 * percentage / 100), 50);
 
         String filled = "█".repeat(filledLength);
@@ -301,11 +302,17 @@ public class DisplayService {
         // Show different indicators based on progress
         if (percentage > 100) {
             System.out.printf("0%% [%s%s] 100%% - OVER BUDGET!\n", filled, empty);
-            System.out.printf("Progress: %.1f/%.1f hours (%.1f%% - %.1f hours over)\n",
-                    actualHours, totalHours, percentage, actualHours - totalHours);
+            System.out.printf("Progress: %.1f/%.1f hours (%.1f%% - %.1f hours over)\n\n",
+                    actualHours, estimateHours, percentage, actualHours - estimateHours);
         } else {
             System.out.printf("0%% [%s%s] 100%%\n", filled, empty);
-            System.out.printf("Progress: %.1f/%.1f hours (%.1f%%)\n", actualHours, totalHours, percentage);
+            System.out.printf("Progress: %.1f/%.1f hours | (%.1f%%) used | [%.1fh] left\n\n",
+                    actualHours, estimateHours, percentage, estimateHours-actualHours);
         }
+    }
+
+    private void getRemainingHoursToEstimate(double hoursVariance, String projectStage) {
+        System.out.println("✨️  There are " + String.format("[%.1f]", hoursVariance) + " more hours left till the " +
+                "(" + projectStage + ")" + " estimate hours are reached.");
     }
 }

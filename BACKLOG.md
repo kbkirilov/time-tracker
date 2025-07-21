@@ -28,11 +28,14 @@ I want to show the total hours per Time Entry on this confirmation step. Like th
 ✅ #6 <u>__Make 'Enter start time' default value equals the 'end_time' of the last entry in database__</u> -> This way you don't have to
   go to the database sheet to look when did you finish the last task.
 
-- [ ] #6 <u>__Make 'Enter end time' default value equals the current time__</u> -> When you enter a new time entry the end time is usually what
+[ ] #6 <u>__Make 'Enter end time' default value equals the current time__</u> -> When you enter a new time entry the end time is usually what
   the current time is. So a default value for the current time would be very handy.
 
 ✅ #7 <u>__Allow entering 'cd1' on time entry project's stage __</u> -> Be able to just put it 'cd1' or 'pf' and automatically convert to uppercase. This
 way I won't have to switch to Caps Lock every time.
+
+[ ] #6 <u>__Implement progress bar for each project stage__</u> -> You can make that as an option to be shown in the detailed 
+project analysis.
 
 ## Fixes suggestions
 

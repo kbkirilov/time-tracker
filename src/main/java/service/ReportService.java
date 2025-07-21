@@ -31,7 +31,7 @@ public class ReportService {
 
     public void getDetailedReportByProjectName(String projectName) {
         ProjectAnalysis analysis = db.getProjectAnalysis(projectName);
-        displayService.displayProjectAnalysis(projectName, analysis);
+        displayService.displayDetailedProjectAnalysis(projectName, analysis);
     }
 
     public void getHoursComparisonByProjectName(String projectName) {
