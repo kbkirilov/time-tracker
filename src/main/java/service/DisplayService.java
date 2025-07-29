@@ -286,6 +286,7 @@ public class DisplayService {
 
     public void displayProjectComparisonAnalysis(TreeMap<String, ProjectAnalysis> map) {
         for (Map.Entry<String, ProjectAnalysis> entry : map.entrySet()) {
+            System.out.printf("Project name: %s%n", entry.getKey());
             displayProjectComparisonAnalysis(entry.getKey(), entry.getValue());
         }
     }
