@@ -37,7 +37,7 @@ way I won't have to switch to Caps Lock every time.
 [ ] #9 <u>__Implement progress bar for each project stage__</u> -> You can make that as an option to be shown in the detailed 
 project analysis.
 
-[ ] #10 <u>__Displaying total hours for project code__</u> -> Once the end of the month comes I have to enter the hours in workflowMax. There, I can't enter 
+✅ #10 <u>__Displaying total hours for project code__</u> -> Once the end of the month comes I have to enter the hours in workflowMax. There, I can't enter 
 hours per set, but rather for the whole project. So for instance if I have worked on SC01 and SC02 for PJH01012, I need to sum the time for both SC01 and SC02
 sets and enter it in WorkflowMax. Suggestion is that I make a new function that sums the hours per project code and displays them in the monthly report. 
 

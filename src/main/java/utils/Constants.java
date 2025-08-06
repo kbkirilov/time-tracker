@@ -36,4 +36,6 @@ public class Constants {
     public static final String SUCCESSFUL_TIME_LOG = "Time logged successfully.";
     public static final String SUCCESSFUL_TIME_ESTIMATE_LOG = "Time estimate logged successfully.";
 
+    public static final double WORKFLOW_MAX_MAX_HOURS_PER_ENTRY = 24;
+
 }

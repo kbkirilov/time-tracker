@@ -52,6 +52,7 @@ public class ReportService {
      */
     public void getTimePeriodProjectBreakdown(LocalDate start, LocalDate end) {
         Map<LocalDate, Map<String, Double>> result = db.getWeeklyProjectReport(start, end);
+        Map<String, Double> projectCodeHours = new HashMap<>();
 
         displayService.printTableHeader(TIME_PERIOD_HEADER, start.toString(), end.toString());
 
@@ -95,11 +96,22 @@ public class ReportService {
 
             for (Map.Entry<String, Double> entry : sortedProjects) {
                 displayService.printRow(entry.getKey(), formatHoursToHHMM(entry.getValue()));
+
+                String projectCodeKey = extractProjectCodeFromProjectName(entry.getKey());
+                projectCodeHours.put(
+                        projectCodeKey ,
+                        projectCodeHours.getOrDefault(projectCodeKey, 0.0) + entry.getValue());
             }
 
             double grandTotal = projectTotals.values().stream().mapToDouble(Double::doubleValue).sum();
             displayService.printTwoColumnHeaders(GRAND_TOTAL, formatHoursToHHMM(grandTotal),
                     DASH_DELIMITER, HEADER_DELIMITER);
+
+            // Print the totals per project
+            displayService.printTableHeader("TOTALS PER PROJECT CODE");
+            displayService.printProjectCodeHours(projectCodeHours);
+            displayService.printTableHeader("TOTALS PER PROJECT CODE (WORKFLOW MAX)");
+            displayService.printProjectCodeHoursForWorkflowMax(projectCodeHours);
         }
     }
 
@@ -138,6 +150,9 @@ public class ReportService {
         return String.format("%02d:%02d hours", h, m);
     }
 
+    private String extractProjectCodeFromProjectName (String projectName) {
+        return projectName.split("[-_]")[0];
+    }
 
     public void printLastTenTimeEstimateEntriesProjectNamesWithIds() {
         TreeMap<Integer, String> map = db.getLastTenTimeEstimatesProjectNamesWithId();

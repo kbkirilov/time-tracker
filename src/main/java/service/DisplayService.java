@@ -316,4 +316,24 @@ public class DisplayService {
         System.out.println("✨️  There are " + String.format("[%.1f]", hoursVariance) + " more hours left till the " +
                 "(" + projectStage + ")" + " estimate hours are reached.");
     }
+
+    public void printProjectCodeHoursForWorkflowMax(Map<String, Double> projectCodeHours) {
+        for (Map.Entry<String, Double> projectCodeHour : projectCodeHours.entrySet()) {
+            String code = projectCodeHour.getKey();
+            Double hours = projectCodeHour.getValue();
+            while (hours > WORKFLOW_MAX_MAX_HOURS_PER_ENTRY) {
+                printRow(code, formatHoursToHHMM(WORKFLOW_MAX_MAX_HOURS_PER_ENTRY));
+                hours -= WORKFLOW_MAX_MAX_HOURS_PER_ENTRY;
+            }
+            printRow(code, formatHoursToHHMM(hours));
+        }
+    }
+
+    public void printProjectCodeHours(Map<String, Double> projectCodeHours) {
+        for (Map.Entry<String, Double> projectCodeHour : projectCodeHours.entrySet()) {
+            String code = projectCodeHour.getKey();
+            Double hours = projectCodeHour.getValue();
+            printRow(code, formatHoursToHHMM(hours));
+        }
+    }
 }
