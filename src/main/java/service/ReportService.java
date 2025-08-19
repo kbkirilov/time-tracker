@@ -107,11 +107,9 @@ public class ReportService {
             displayService.printTwoColumnHeaders(GRAND_TOTAL, formatHoursToHHMM(grandTotal),
                     DASH_DELIMITER, HEADER_DELIMITER);
 
-            // Print the totals per project
-            displayService.printTableHeader("TOTALS PER PROJECT CODE");
-            displayService.printProjectCodeHours(projectCodeHours);
-            displayService.printTableHeader("TOTALS PER PROJECT CODE (WORKFLOW MAX)");
-            displayService.printProjectCodeHoursForWorkflowMax(projectCodeHours);
+            // Print total hours per
+            printTotalHoursPerProjectCode(projectCodeHours);
+            printTotalHoursPerProjectCodeWorkflowMax(projectCodeHours);
         }
     }
 
@@ -157,5 +155,15 @@ public class ReportService {
     public void printLastTenTimeEstimateEntriesProjectNamesWithIds() {
         TreeMap<Integer, String> map = db.getLastTenTimeEstimatesProjectNamesWithId();
         displayService.printValuesFromSortedMap(map);
+    }
+
+    private void printTotalHoursPerProjectCode(Map<String, Double> projectCodeHours) {
+        displayService.printTableHeader(TOTALS_PER_PROJECT_CODE);
+        displayService.printProjectCodeHours(projectCodeHours);
+    }
+
+    private void printTotalHoursPerProjectCodeWorkflowMax(Map<String, Double> projectCodeHours) {
+        displayService.printTableHeader(TOTALS_PER_PROJECT_CODE_WORKFLOW_MAX);
+        displayService.printProjectCodeHoursForWorkflowMax(projectCodeHours);
     }
 }

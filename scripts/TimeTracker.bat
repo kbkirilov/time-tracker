@@ -1,6 +1,6 @@
 @echo off
 title Time Tracker Application
-echo Starting Time Tracker ...
+@REM echo Starting Time Tracker ...
 echo.
 
 REM Check if Java is installed

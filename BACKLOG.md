@@ -39,7 +39,12 @@ project analysis.
 
 ✅ #10 <u>__Displaying total hours for project code__</u> -> Once the end of the month comes I have to enter the hours in workflowMax. There, I can't enter 
 hours per set, but rather for the whole project. So for instance if I have worked on SC01 and SC02 for PJH01012, I need to sum the time for both SC01 and SC02
-sets and enter it in WorkflowMax. Suggestion is that I make a new function that sums the hours per project code and displays them in the monthly report. 
+sets and enter it in WorkflowMax. Suggestion is that I make a new function that sums the hours per project code and displays them in the monthly report.
+
+[ ] #11 <u>__Daily hours overview__</u> -> I want to get a better visual on the time I have spent working on a project throughout the day. I want to create a 
+table like structure. This function will display all the projects that I have worked during the day (y-axis) and the time I have spent (x-axis) working on each.
+Imagine a table. The first column will the 'project-names' and second colum will the 'daily-hours'. The second column will be subdivided on the daily-hours I have 
+worked it.
 
 ## Fixes suggestions
 

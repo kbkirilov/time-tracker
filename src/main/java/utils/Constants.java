@@ -14,6 +14,8 @@ public class Constants {
     public static final String GRAND_TOTAL = "GRAND TOTAL";
     public static final String DAILY_TOTAL = "DAILY TOTAL";
     public static final String DATE = "DATE";
+    public static final String TOTALS_PER_PROJECT_CODE = "TOTAL HOURS PER PROJECT CODE";
+    public static final String TOTALS_PER_PROJECT_CODE_WORKFLOW_MAX = "TOTAL HOURS PER PROJECT CODE (WORKFLOW MAX)";
     public static final int HEADER_STRING_MAX_LENGTH = 50;
 
     public static final int HOURS_IN_WORKING_DAY = 8;

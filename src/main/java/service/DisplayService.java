@@ -109,6 +109,12 @@ public class DisplayService {
         System.out.println("=".repeat(DELIMITER_COUNT_65));
     }
 
+    public void printTableHeader(String header) {
+        System.out.println("=".repeat(DELIMITER_COUNT_65));
+        System.out.printf("%s: %n",header);
+        System.out.println("=".repeat(DELIMITER_COUNT_65));
+    }
+
     public void printSubHeader(String header, int delimiter) {
         System.out.printf("%s%n",header);
         System.out.println("-".repeat(delimiter));
