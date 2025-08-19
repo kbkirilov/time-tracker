@@ -175,7 +175,12 @@ public class ReportService {
     }
 
     private void calculateCurrentEarnings(double workedHours) {
-        double hourlyRate = Double.parseDouble(System.getenv("HOURLY_RATE"));
+        String hourlyRateStr = System.getenv("HOURLY_GBP_RATE");
+        if (hourlyRateStr == null) {
+            System.err.println("ERROR: HOURLY_GBP_RATE environment variable not set");
+            return;
+        }
+        double hourlyRate = Double.parseDouble(System.getenv("HOURLY_GBP_RATE"));
         double currEarningsGBP = workedHours * hourlyRate;
 
         displayService.printCurrentEarnings(currEarningsGBP);
