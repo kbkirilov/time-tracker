@@ -4,6 +4,7 @@ import record.ProjectAnalysis;
 import record.TimeEntry;
 import record.TimeEstimate;
 
+import java.text.DecimalFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -344,6 +345,11 @@ public class DisplayService {
     }
 
     public void printCurrentEarnings(double earningsGBP) {
-        printTwoColumnHeaders(CURRENT_PERIOD_EARNINGS, String.format("£ %.2f", earningsGBP));
+        printTwoColumnHeaders(CURRENT_PERIOD_EARNINGS, formatSum(earningsGBP));
+    }
+
+    private String formatSum(double sum) {
+        DecimalFormat formatter = new DecimalFormat("£#,##0.00");
+        return formatter.format(sum);
     }
 }
