@@ -87,6 +87,11 @@ public class ReportService {
             }
         }
 
+        double grandTotal = projectTotals.values().stream().mapToDouble(Double::doubleValue).sum();
+
+        // Print current income
+        calculateCurrentEarnings(grandTotal);
+
         // If the map contains information for more than 1 day
         if (!start.isEqual(end)) {
             displayService.printTotalsPerProjectHeaders();
@@ -103,9 +108,11 @@ public class ReportService {
                         projectCodeHours.getOrDefault(projectCodeKey, 0.0) + entry.getValue());
             }
 
-            double grandTotal = projectTotals.values().stream().mapToDouble(Double::doubleValue).sum();
             displayService.printTwoColumnHeaders(GRAND_TOTAL, formatHoursToHHMM(grandTotal),
                     DASH_DELIMITER, HEADER_DELIMITER);
+
+            // Print current income
+            calculateCurrentEarnings(grandTotal);
 
             // Print total hours per
             printTotalHoursPerProjectCode(projectCodeHours);
@@ -165,5 +172,12 @@ public class ReportService {
     private void printTotalHoursPerProjectCodeWorkflowMax(Map<String, Double> projectCodeHours) {
         displayService.printTableHeader(TOTALS_PER_PROJECT_CODE_WORKFLOW_MAX);
         displayService.printProjectCodeHoursForWorkflowMax(projectCodeHours);
+    }
+
+    private void calculateCurrentEarnings(double workedHours) {
+        double dailyRate = Double.parseDouble(System.getenv("DAILY_RATE"));
+        double currEarnings = workedHours * dailyRate;
+
+        displayService.printCurrentEarnings(currEarnings);
     }
 }

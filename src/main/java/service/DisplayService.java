@@ -4,6 +4,7 @@ import record.ProjectAnalysis;
 import record.TimeEntry;
 import record.TimeEstimate;
 
+import java.security.PublicKey;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -341,5 +342,9 @@ public class DisplayService {
             Double hours = projectCodeHour.getValue();
             printRow(code, formatHoursToHHMM(hours));
         }
+    }
+
+    public void printCurrentEarnings(double hours) {
+        printTwoColumnHeaders(CURRENT_PERIOD_EARNINGS, String.format("£ %.2f", hours));
     }
 }
