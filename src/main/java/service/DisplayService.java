@@ -5,6 +5,7 @@ import record.TimeEntry;
 import record.TimeEstimate;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -344,12 +345,23 @@ public class DisplayService {
         }
     }
 
-    public void printCurrentEarnings(double earningsGBP) {
-        printTwoColumnHeaders(CURRENT_PERIOD_EARNINGS, formatSum(earningsGBP));
+    public void printCurrentEarnings(double earningsGBP, double earningsBGN) {
+        String earningsGBPFormated = formatSumGBP(earningsGBP);
+        String earningsBGNFormated = formatSumBGN(earningsBGN);
+        String resultString = earningsGBPFormated + " / " + earningsBGNFormated;
+
+        printTwoColumnHeaders(CURRENT_PERIOD_EARNINGS, resultString);
     }
 
-    private String formatSum(double sum) {
+    private String formatSumGBP(double sum) {
         DecimalFormat formatter = new DecimalFormat("£#,##0.00");
         return formatter.format(sum);
+    }
+
+    private String formatSumBGN(double sum) {
+        Locale bgLocale = new Locale("bg", "BG");
+        DecimalFormat formatter = new DecimalFormat("#,##0.00",
+                DecimalFormatSymbols.getInstance(bgLocale));
+        return formatter.format(sum) + "лв.";
     }
 }

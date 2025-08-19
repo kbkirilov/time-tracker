@@ -39,7 +39,11 @@ public class Constants {
     public static final String GOODBYE_MESSAGE = "Thank you for using the Time Tracker. Goodbye!";
     public static final String SUCCESSFUL_TIME_LOG = "Time logged successfully.";
     public static final String SUCCESSFUL_TIME_ESTIMATE_LOG = "Time estimate logged successfully.";
+    public static final String HOURLY_GBP_RATE_ENV_NOT_SET_ERROR = "ERROR: HOURLY_GBP_RATE environment variable not set";
 
     public static final double WORKFLOW_MAX_MAX_HOURS_PER_ENTRY = 24;
+
+    // Env variables
+    public static final String HOURLY_GBP_RATE = "HOURLY_GBP_RATE";
 
 }

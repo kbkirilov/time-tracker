@@ -175,14 +175,17 @@ public class ReportService {
     }
 
     private void calculateCurrentEarnings(double workedHours) {
-        String hourlyRateStr = System.getenv("HOURLY_GBP_RATE");
-        if (hourlyRateStr == null) {
-            System.err.println("ERROR: HOURLY_GBP_RATE environment variable not set");
+        String hourlyGBPRateStr = System.getenv(HOURLY_GBP_RATE);
+        if (hourlyGBPRateStr == null) {
+            System.err.println(HOURLY_GBP_RATE_ENV_NOT_SET_ERROR);
             return;
         }
-        double hourlyRate = Double.parseDouble(System.getenv("HOURLY_GBP_RATE"));
-        double currEarningsGBP = workedHours * hourlyRate;
+        double hourlyRateGBP = Double.parseDouble(System.getenv(HOURLY_GBP_RATE));
+        double currEarningsGBP = workedHours * hourlyRateGBP;
+        // BGN earnings are only an estimate.
+        double currEarningsBGN = currEarningsGBP * ESTIMATE_GBP_TO_BGN_RATE;
 
-        displayService.printCurrentEarnings(currEarningsGBP);
+
+        displayService.printCurrentEarnings(currEarningsGBP, currEarningsBGN);
     }
 }
