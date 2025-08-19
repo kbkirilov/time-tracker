@@ -38,3 +38,4 @@ BACKLOG.md
 
 #### Gradle ####
 .gradle/
+.tmp.driveupload/
