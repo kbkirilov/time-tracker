@@ -16,6 +16,7 @@ public class Constants {
     public static final String DATE = "DATE";
     public static final String TOTALS_PER_PROJECT_CODE = "TOTAL HOURS PER PROJECT CODE";
     public static final String TOTALS_PER_PROJECT_CODE_WORKFLOW_MAX = "TOTAL HOURS PER PROJECT CODE (WORKFLOW MAX)";
+    public static final String CURRENT_PERIOD_EARNINGS = "CURRENT PERIOD EARNINGS";
     public static final int HEADER_STRING_MAX_LENGTH = 50;
 
     public static final int HOURS_IN_WORKING_DAY = 8;
@@ -23,6 +24,7 @@ public class Constants {
     public static final int DELIMITER_COUNT_70 = 70;
     public static final int DELIMITER_COUNT_80 = 80;
     public static final int NUMBER_OF_PROJECTS = 5;
+    public static final double ESTIMATE_GBP_TO_BGN_RATE = 2.25;
 
     public static final String EMOJI_SPARKLES = "✨";
 
