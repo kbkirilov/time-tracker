@@ -1,3 +1,4 @@
+chcp 65001
 @echo off
 title Time Tracker Application
 
@@ -10,9 +11,6 @@ if exist .env (
         set "%%i=%%j"
     )
 )
-
-REM Debug: Check if the variable was loaded
-echo DEBUG: HOURLY_GBP_RATE is set to: %HOURLY_GBP_RATE%
 
 java -version >nul 2>&1
 if %errorlevel% neq 0 (
