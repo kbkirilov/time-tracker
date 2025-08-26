@@ -49,6 +49,8 @@ public class MainMenuService extends MenuBase {
     public void show() {
         boolean isRunning = true;
 
+        // TODO Display a message at the start of the program here
+
         while (isRunning) {
             display("MAIN MENU",
                     "Time tracking",

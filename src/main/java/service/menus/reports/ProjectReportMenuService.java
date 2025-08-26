@@ -28,7 +28,7 @@ public class ProjectReportMenuService extends MenuBase {
                     "View detailed report by project name",
                     "View hours by project's name",
                     "View hours comparison by project's name",
-                    "View hours comparison on last 5 projects",
+                    "View hours comparison on last 10 projects",
                     "Back to reports menu");
 
             int choice = getChoice();
@@ -37,7 +37,7 @@ public class ProjectReportMenuService extends MenuBase {
                 case 1 -> getDetailedReportByProjectName();
                 case 2 -> getHoursByProjectName();
                 case 3 -> getHoursComparisonByProjectName();
-                case 4 -> getLastFiveProjectProgress();
+                case 4 -> getLastTenProjectProgress();
                 case 5 -> {
                     isRunning = false;
                     back();
@@ -47,10 +47,10 @@ public class ProjectReportMenuService extends MenuBase {
         }
     }
 
-    private void getLastFiveProjectProgress() {
-        displayMenuHeader("LAST 5 PROJECT PROGRESS REPORT");
+    private void getLastTenProjectProgress() {
+        displayMenuHeader("LAST 10 PROJECT PROGRESS REPORT");
 
-        reportService.getLastFiveProjectProgress();
+        reportService.getLastTenProjectProgress();
     }
 
     private void getHoursComparisonByProjectName() {

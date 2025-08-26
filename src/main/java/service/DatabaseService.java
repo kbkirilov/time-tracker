@@ -760,7 +760,7 @@ public class DatabaseService {
         );
     }
 
-    public TreeMap<String, ProjectAnalysis> getLastFiveProjectComparison() {
+    public TreeMap<String, ProjectAnalysis> getLastTenProjectComparison() {
         TreeMap<String, ProjectAnalysis> result = new TreeMap<>();
 
         List<String> last5UniqueProjectNames = getLastXProjectNames(NUMBER_OF_PROJECTS);

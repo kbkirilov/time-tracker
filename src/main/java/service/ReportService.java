@@ -39,8 +39,8 @@ public class ReportService {
         displayService.displayProjectComparisonAnalysis(projectName, analysis);
     }
 
-    public void getLastFiveProjectProgress() {
-        TreeMap<String, ProjectAnalysis> map = db.getLastFiveProjectComparison();
+    public void getLastTenProjectProgress() {
+        TreeMap<String, ProjectAnalysis> map = db.getLastTenProjectComparison();
         displayService.displayProjectComparisonAnalysis(map);
     }
 
