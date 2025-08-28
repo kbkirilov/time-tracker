@@ -101,9 +101,8 @@ public class PeriodReportMenuService extends MenuBase {
         displayMenuHeader("CURRENT MONTH BREAKDOWN");
         LocalDate now = LocalDate.now();
         LocalDate start = now.withDayOfMonth(1);
-        LocalDate end = LocalDate.now();
 
-        reportService.getTimePeriodProjectBreakdown(start, end);
+        reportService.getTimePeriodProjectBreakdown(start, now);
     }
 
     /**

@@ -90,7 +90,7 @@ public class ReportService {
         double grandTotal = projectTotals.values().stream().mapToDouble(Double::doubleValue).sum();
 
         // Print current income
-        calculateCurrentEarnings(grandTotal);
+        printCurrentEarnings(grandTotal);
 
         // If the map contains information for more than 1 day
         if (!start.isEqual(end)) {
@@ -112,7 +112,7 @@ public class ReportService {
                     DASH_DELIMITER, HEADER_DELIMITER);
 
             // Print current income
-            calculateCurrentEarnings(grandTotal);
+            printCurrentEarnings(grandTotal);
 
             // Print total hours per
             printTotalHoursPerProjectCode(projectCodeHours);
@@ -174,7 +174,7 @@ public class ReportService {
         displayService.printProjectCodeHoursForWorkflowMax(projectCodeHours);
     }
 
-    private void calculateCurrentEarnings(double workedHours) {
+    private void printCurrentEarnings(double workedHours) {
         String hourlyGBPRateStr = System.getenv(HOURLY_GBP_RATE);
         if (hourlyGBPRateStr == null) {
             System.err.println(HOURLY_GBP_RATE_ENV_NOT_SET_ERROR);
@@ -187,5 +187,21 @@ public class ReportService {
 
 
         displayService.printCurrentEarnings(currEarningsGBP, currEarningsBGN);
+    }
+
+    public void getShHoursForTimePeriod(LocalDate start, LocalDate end) {
+        Map<String, Double> map = db.getShHoursForTimePeriod(start, end);
+
+        displayService.printTwoColumnHeaders("PROJECT NAME", "HOURS");
+
+        for (Map.Entry<String, Double> entry : map.entrySet()) {
+            displayService.printRow(entry.getKey(), formatHoursToHHMM(entry.getValue()));
+        }
+
+        double grandTotal = map.values().stream().mapToDouble(Double::doubleValue).sum();
+
+        displayService.printTwoColumnHeaders(GRAND_TOTAL, formatHoursToHHMM(grandTotal),
+                DASH_DELIMITER, HEADER_DELIMITER);
+        printCurrentEarnings(grandTotal);
     }
 }

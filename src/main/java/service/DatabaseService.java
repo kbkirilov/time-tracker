@@ -774,4 +774,36 @@ public class DatabaseService {
 
         return result;
     }
+
+    public Map<String, Double> getShHoursForTimePeriod(LocalDate start, LocalDate end) {
+        Map<String, Double> map = new HashMap<>();
+
+        String sql = """
+                SELECT project_name, SUM(worked_hours) AS total_hours
+                FROM time_entries
+                WHERE entry_date BETWEEN ? AND ?
+                    AND time_variance = 2
+                GROUP BY project_name;
+                """;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(true);
+            pstmt.setString(1, start.toString());
+            pstmt.setString(2, end.toString());
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                String projectName = rs.getString("project_name");
+                double hours = rs.getDouble("total_hours");
+
+                map.put(projectName, hours);
+            }
+        } catch (SQLException e) {
+            System.err.println("Query error: " + e.getMessage());
+        }
+
+        return map;
+
+    }
 }

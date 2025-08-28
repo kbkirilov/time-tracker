@@ -3,6 +3,7 @@ package service.menus.reports;
 import service.ReportService;
 import service.menus.MenuBase;
 
+import java.time.LocalDate;
 import java.util.Scanner;
 
 import static utils.Constants.NUMBER_OF_PROJECTS;
@@ -29,6 +30,7 @@ public class ProjectReportMenuService extends MenuBase {
                     "View hours by project's name",
                     "View hours comparison by project's name",
                     "View hours comparison on last 10 projects",
+                    "View SH hours for current month",
                     "Back to reports menu");
 
             int choice = getChoice();
@@ -38,13 +40,23 @@ public class ProjectReportMenuService extends MenuBase {
                 case 2 -> getHoursByProjectName();
                 case 3 -> getHoursComparisonByProjectName();
                 case 4 -> getLastTenProjectProgress();
-                case 5 -> {
+                case 5 -> getAllShHoursForCurrentMonth();
+                case 6 -> {
                     isRunning = false;
                     back();
                 }
                 default -> System.out.println(INVALID_CHOICE_MESSAGE);
             }
         }
+    }
+
+    private void getAllShHoursForCurrentMonth() {
+        displayMenuHeader("SH HOURS FOR CURRENT MONTH");
+        LocalDate now = LocalDate.now();
+        LocalDate start = now.withDayOfMonth(1);
+        LocalDate end = LocalDate.now();
+
+        reportService.getShHoursForTimePeriod(start, end);
     }
 
     private void getLastTenProjectProgress() {
