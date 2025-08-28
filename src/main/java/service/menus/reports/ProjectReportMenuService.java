@@ -6,6 +6,7 @@ import service.menus.MenuBase;
 import java.time.LocalDate;
 import java.util.Scanner;
 
+import static service.InputService.getValidDate;
 import static utils.Constants.NUMBER_OF_PROJECTS;
 import static utils.Constants.INVALID_CHOICE_MESSAGE;
 
@@ -31,6 +32,7 @@ public class ProjectReportMenuService extends MenuBase {
                     "View hours comparison by project's name",
                     "View hours comparison on last 10 projects",
                     "View SH hours for current month",
+                    "View SH hours for custom time period",
                     "Back to reports menu");
 
             int choice = getChoice();
@@ -41,13 +43,23 @@ public class ProjectReportMenuService extends MenuBase {
                 case 3 -> getHoursComparisonByProjectName();
                 case 4 -> getLastTenProjectProgress();
                 case 5 -> getAllShHoursForCurrentMonth();
-                case 6 -> {
+                case 6 -> getAllShHoursForCustomTimePeriod();
+                case 7 -> {
                     isRunning = false;
                     back();
                 }
                 default -> System.out.println(INVALID_CHOICE_MESSAGE);
             }
         }
+    }
+
+    private void getAllShHoursForCustomTimePeriod() {
+        displayMenuHeader("SH HOURS FOR CUSTOM PERIOD");
+
+        LocalDate start = getValidDate(scanner);
+        LocalDate end = getValidDate(start, scanner);
+
+        reportService.getShHoursForTimePeriod(start, end);
     }
 
     private void getAllShHoursForCurrentMonth() {

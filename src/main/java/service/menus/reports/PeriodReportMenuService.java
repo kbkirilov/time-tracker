@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
+import static service.InputService.getValidDate;
 import static utils.Constants.INVALID_CHOICE_MESSAGE;
 
 public class PeriodReportMenuService extends MenuBase {
@@ -60,35 +61,8 @@ public class PeriodReportMenuService extends MenuBase {
     private void getCustomPeriodBreakdown() {
         displayMenuHeader("CUSTOM PERIOD BREAKDOWN");
 
-        LocalDate start = null;
-        LocalDate end = null;
-
-        while (start == null) {
-            System.out.print("Enter the start date (YYYY-MM-DD): ");
-            String input = scanner.nextLine();
-
-            try {
-                start = LocalDate.parse(input, DateTimeFormatter.ISO_LOCAL_DATE);
-            } catch (DateTimeParseException e) {
-                System.out.println("Invalid date format. Please use YYYY-MM-DD format.");
-            }
-        }
-
-        while (end == null) {
-            System.out.print("Enter the end date (YYYY-MM-DD): ");
-            String input = scanner.nextLine();
-
-            try {
-                end = LocalDate.parse(input, DateTimeFormatter.ISO_LOCAL_DATE);
-
-                if (end.isBefore(start)) {
-                    System.out.println("End date must be after start date.");
-                    end = null;
-                }
-            } catch (DateTimeParseException e) {
-                System.out.println("Invalid date format. Please use YYYY-MM-DD format.");
-            }
-        }
+        LocalDate start = getValidDate(scanner);
+        LocalDate end = getValidDate(start, scanner);
 
         reportService.getTimePeriodProjectBreakdown(start, end);
 

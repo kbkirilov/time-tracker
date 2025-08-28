@@ -6,6 +6,7 @@ import record.TimeEstimate;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class InputService {
@@ -172,6 +173,55 @@ public class InputService {
         }
 
         return new TimeEstimate(projectName, cd1EstimateHours, cd2EstimateHours, pfEstimateHours);
+    }
+
+    /**
+     * This method continuously tries to get a correctly formated date from the console.
+     * @param scanner The scanner object that will read user's input
+     * @return the correctly formatted date
+     */
+    public static LocalDate getValidDate(Scanner scanner) {
+        LocalDate date = null;
+
+        while (date == null) {
+            System.out.print("Enter the start date (YYYY-MM-DD): ");
+            String input = scanner.nextLine();
+
+            try {
+                date = LocalDate.parse(input, DateTimeFormatter.ISO_LOCAL_DATE);
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please use YYYY-MM-DD format.");
+            }
+        }
+        return date;
+    }
+
+    /**
+     * This is an overloaded method that makes sure that the returned date is after the passed 'date' date
+     * @param date The date we want to make sure is before the returned date from the method
+     * @param scanner The scanner object that will read user's input
+     * @return the correctly formatted date
+     */
+    public static LocalDate getValidDate(LocalDate date, Scanner scanner) {
+        LocalDate end = null;
+
+        while (end == null) {
+            System.out.print("Enter the end date (YYYY-MM-DD): ");
+            String input = scanner.nextLine();
+
+            try {
+                end = LocalDate.parse(input, DateTimeFormatter.ISO_LOCAL_DATE);
+
+                if (end.isBefore(date)) {
+                    System.out.println("End date must be after start date.");
+                    end = null;
+                }
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please use YYYY-MM-DD format.");
+            }
+        }
+
+        return end;
     }
 
     private double readDoubleWithPrompt(String prompt) {
